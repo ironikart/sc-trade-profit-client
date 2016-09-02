@@ -1,0 +1,37 @@
+.appBody,
+.footer,
+.intro {
+    max-width: 60em;
+    margin: 1em auto;
+}
+
+.expressionEditor {
+    &__item {
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 1em;
+        margin-top: .5em;
+
+        &-button {
+            padding: .5em;
+            margin-left: .25em;
+            margin-right: .25em;
+        }
+
+        &-field {
+            width: 100%;
+            padding: .25em;
+        }
+    }
+
+    &__result-text {
+        font-size: 2rem;
+    }
+}
+
+.hidden-toggle {
+    display: none;
+
+    &:target {
+        display: block;
+    }
+}
