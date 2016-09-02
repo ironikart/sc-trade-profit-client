@@ -1,0 +1,25 @@
+.appBody,
+.footer,
+.intro {
+  max-width: 60em;
+  margin: 1em auto; }
+
+.expressionEditor__item {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 1em;
+  margin-top: .5em; }
+  .expressionEditor__item-button {
+    padding: .5em;
+    margin-left: .25em;
+    margin-right: .25em; }
+  .expressionEditor__item-field {
+    width: 100%;
+    padding: .25em; }
+
+.expressionEditor__result-text {
+  font-size: 2rem; }
+
+.hidden-toggle {
+  display: none; }
+  .hidden-toggle:target {
+    display: block; }
