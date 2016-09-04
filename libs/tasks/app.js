@@ -41,6 +41,10 @@ gulp.task('browserify', function() {
         debug:   true
     });
 
+    b.transform({
+        global: true
+    }, 'uglifyify');
+
     b.on('update', doBundle);
     b.on('log', gutil.log.bind(gutil, 'Browserify'));
 
