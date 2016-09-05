@@ -4,10 +4,19 @@ import assign from 'object.assign';
 
 const conditionExpr = /^\s+(AND|OR)\s+(.*)$/i;
 const assignmentExpr = /^([a-z]+[a-z0-9\-\_]*)\=([^\=]+)$/i;
+const descriptionExpr = /^#\>\s*(.*)/;
 
+/**
+ * Parses a line and categorises the data it finds.
+ *
+ * @param {String} line The line to parse.
+ *
+ * @return mixed Will return null if no matching data is found.
+ */
 function _parseLine(line) {
+    let match;
     if (assignmentExpr.test(line) === true) {
-        var assignment = line.match(assignmentExpr);
+        let assignment = line.match(assignmentExpr);
         return {
             assignment: {
                 raw:  line,
@@ -16,9 +25,9 @@ function _parseLine(line) {
             }
         };
     } else if (conditionExpr.test(line) === true) {
-        var match = line.match(conditionExpr);
-        var logic = match[1].toUpperCase();
-        var condition = match.pop().trim();
+        match = line.match(conditionExpr);
+        let logic = match[1].toUpperCase();
+        let condition = match.pop().trim();
         return {
             condition: {
                 raw:  line,
@@ -26,13 +35,26 @@ function _parseLine(line) {
                 expr: mathjs.compile(condition)
             }
         };
-    }
+    } else if (descriptionExpr.test(line) === true) {
+        match = line.match(descriptionExpr);
+        return {
+            description: match[1]
+        };
+    }//end if
 
     return null;
-}
 
+}//end _parseLine()
+
+/**
+ * Parse a raw string into formatted expression object.
+ *
+ * @param {String} raw Raw imported expression string to parse.
+ *
+ * @return {Object}
+ */
 function _parse(raw) {
-    var lines = [];
+    let lines = [];
 
     if (Array.isArray(raw) === true) {
         lines = raw;
@@ -42,9 +64,11 @@ function _parse(raw) {
         lines = raw.split(/\n+/);
     }
 
-    var currentAssignment = null;
-    var assignments = {};
-    var conditions = {};
+    let currentAssignment = null;
+    let assignments = {};
+    let conditions = {};
+    let descriptions = {};
+    let description = null;
 
     lines
     .map(_parseLine)
@@ -52,11 +76,27 @@ function _parse(raw) {
         return parsed !== null;
     })
     .forEach((parsed, index) => {
+        // Handle assigments.
         if (parsed.hasOwnProperty('assignment') === true) {
             currentAssignment = 'a'+index;
             assignments[currentAssignment] = parsed.assignment;
+
+            if (description !== null) {
+                descriptions[currentAssignment] = description;
+                description = null;
+            }
         }
 
+        // Handle descriptions.
+        if (parsed.hasOwnProperty('description') === true) {
+            if (description === null) {
+                description = [parsed.description];
+            } else {
+                description.push(parsed.description);
+            }
+        }
+
+        // Handle conditions.
         if (parsed.hasOwnProperty('condition') === true) {
             if (currentAssignment === null) {
                 throw new ExpressionError(
@@ -74,16 +114,52 @@ function _parse(raw) {
 
     return {
         assignments,
-        conditions
+        conditions,
+        descriptions
     };
 }
 
 class Expression {
-    constructor(raw) {
-        this._parsed = _parse(raw);
-    }
 
+    /**
+     * Constructor
+     *
+     * @param {String} raw Initial string to parse.
+     *
+     * @return void
+     */
+    constructor(raw) {
+        if (raw) {
+            this.parse(raw);
+        }
+
+    }//end constructor()
+
+    /**
+     * Parse a raw string into an expression.
+     *
+     * @param {String} raw Initial string to parse.
+     *
+     * @return void
+     */
+    parse(raw) {
+        this._parsed = _parse(raw);
+
+    }//end parse()
+
+
+    /**
+     * Run the expression against scope data.
+     *
+     * @param {Object} data Initial data hash.
+     *
+     * @return {Object} modified data hash with new assignments.
+     */
     run(data) {
+        if (!this._parsed) {
+            return;
+        }
+
         let scope = assign({}, data);
         for (var id in this._parsed.assignments) {
             if (this._parsed.assignments.hasOwnProperty(id)) {
@@ -107,7 +183,31 @@ class Expression {
         }
 
         return scope;
-    }
-}
+
+    }//end run()
+
+    /**
+     * Convert this object into JSON.
+     *
+     * @return {Object}
+     */
+    toJSON() {
+        let readable = [];
+
+        for (var id in this._parsed.assignments) {
+            if (this._parsed.assignments.hasOwnProperty(id) === true) {
+                readable.push({
+                    assignment:  this._parsed.assignments[id],
+                    conditions:  this._parsed.conditions[id] || [],
+                    description: this._parsed.descriptions[id] || []
+                });
+            }
+        }
+
+        return readable;
+
+    }//end toJSON()
+
+}//end class
 
 export default Expression;
