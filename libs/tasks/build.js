@@ -1,4 +1,4 @@
 'use strict';
 var gulp = require('gulp');
 
-gulp.task('build', ['browserify', 'copy']);
+gulp.task('build', ['clean', 'browserify', 'copy', 'sass']);

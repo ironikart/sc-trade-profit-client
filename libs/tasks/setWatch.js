@@ -9,4 +9,7 @@ var gulp = require('gulp');
 gulp.task('setWatch', function() {
     global.sync = require('browser-sync').create();
     global.isWatching = true;
+
+    gulp.watch('src/html/*.html', ['copyHTML']).on('change', global.sync.reload);
+    gulp.watch('src/styles/*.scss', ['sass']).on('change', global.sync.reload);
 });
