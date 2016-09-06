@@ -22,6 +22,11 @@ class ExpressionItem extends React.Component {
         this.props.updateExpression(changedExpr);
     }
 
+    handleDescriptionChange() {
+        let values = this._description.value.split(/\n+/);
+        this.props.updateDescription(values);
+    }
+
     render() {
         let name = 'exprItem'+this.props.index;
         let symbol = this.props.expr.assignment.symbol;
@@ -86,6 +91,8 @@ class ExpressionItem extends React.Component {
             );
         }
 
+        let description = this.props.expr.description.join('\n');
+
         return (
             <div key={this.props.index} className="expressionEditor__item row">
                 <div className="medium-2 columns">
@@ -97,6 +104,16 @@ class ExpressionItem extends React.Component {
                         field={exprField}
                         handleChange={this.handleExprChange.bind(this)}
                         handleError={function() {}} />
+
+                    <div className="expressionEditor__item-description">
+                        <textarea
+                            rows="4"
+                            cols="50"
+                            value={description}
+                            ref={(elem) => this._description = elem}
+                            onChange={this.handleDescriptionChange.bind(this)}>
+                        </textarea>
+                    </div>
                 </div>
 
                 <div className="medium-3 columns">

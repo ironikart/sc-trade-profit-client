@@ -36,7 +36,15 @@ function removeSet(state, action) {
 
 function addExpression(state, action) {
     let clone = assign({}, state);
-    let expr = action.expr || '';
+    let expr = action.expr || {
+        assignment: {
+            symbol: '',
+            expr:   '',
+            line:   ''
+        },
+        conditions:  [],
+        description: []
+    };
     clone.sets[action.setIndex].expr.splice(action.exprIndex, 0, expr);
     return clone;
 }
@@ -75,7 +83,13 @@ function moveExpression(state, action) {
 
 function importSet(state, action) {
     let clone = addSet(state, action);
-    clone.sets[clone.currentIndex].expr = action.expr;
+    clone.sets[clone.currentIndex].expr = parse(action.expr);
+    return clone;
+}
+
+function updateDescription(state, action) {
+    let clone = assign({}, state);
+    clone.sets[action.setIndex].expr[action.exprIndex].description = action.description;
     return clone;
 }
 
@@ -97,6 +111,8 @@ export default function expressionReducer(state = {}, action) {
         return removeExpression(state, action);
     case 'EXPR_MOVE':
         return moveExpression(state, action);
+    case 'EXPR_UPDATE_DESCRIPTION':
+        return updateDescription(state, action);
     default:
         return state;
     }
