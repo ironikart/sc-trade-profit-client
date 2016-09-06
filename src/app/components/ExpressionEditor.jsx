@@ -5,7 +5,6 @@ import { importSet, exportSet } from '../util/set';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { storeJSON, clear } from '../util/local_store';
 import Manifest from './Manifest.jsx';
-import assign from 'object.assign';
 
 class ExpressionEditor extends React.Component {
     constructor(props) {
@@ -13,14 +12,13 @@ class ExpressionEditor extends React.Component {
 
         this.state = {
             error: null,
-            scope: {
-                totalBuy:      0,
-                totalSell:     0,
-                totalMass:     0,
-                totalQuantity: 0
-            },
-            set: this.getCurrentSet(props)
+            set:   this.getCurrentSet(props)
         };
+    }
+
+    componentWillMount() {
+        // Run an initial calculation.
+        this.props.calculate();
     }
 
     componentWillReceiveProps(props) {
@@ -39,6 +37,7 @@ class ExpressionEditor extends React.Component {
 
     handleSetChange(e) {
         this.props.setCurrent(e.target.selectedIndex);
+        this.props.calculate();
     }
 
     handleAddSetKeyUp(e) {
@@ -108,18 +107,11 @@ class ExpressionEditor extends React.Component {
         }
     }
 
-    updateScope(results) {
-        this.setState({
-            scope: assign(this.state.scope, results)
-        });
-    }
-
     render() {
         let props = this.props;
         let currentIndex = props.expressions.currentIndex;
         let sets = props.expressions.sets;
         let currentSet = this.state.set;
-        let outputProp = currentSet.output;
         let lastExprIndex = currentSet.expr.length - 1;
 
         let error = '';
@@ -153,11 +145,11 @@ class ExpressionEditor extends React.Component {
         let exported = exportSet(currentSet.label, currentSet.expr);
 
         let symbols = [];
-        for (var symbolName in this.state.scope) {
-            if (typeof this.state.scope[symbolName] === 'number') {
+        for (var symbolName in this.props.scope) {
+            if (typeof this.props.scope[symbolName] === 'number') {
                 symbols.push({
                     name:  symbolName,
-                    value: this.state.scope[symbolName]
+                    value: this.props.scope[symbolName]
                 });
             }
         }
@@ -193,13 +185,11 @@ class ExpressionEditor extends React.Component {
                             setCurrentShip={this.props.setCurrentShip}
                             addCargo={this.props.addCargo}
                             removeCargo={this.props.removeCargo}
-                            updateCargo={this.props.updateCargo}
-                            updateScope={this.updateScope.bind(this)} />
+                            updateCargo={this.props.updateCargo} />
                         <ExpressionResult
+                            {...this.props.manifest}
                             handleError={this.setError.bind(this)}
-                            output={outputProp}
-                            expr={currentSet.expr}
-                            scope={this.state.scope} />
+                            set={currentSet} />
                     </TabPanel>
                     <TabPanel>
                         {switcher}

@@ -1,35 +1,35 @@
 import React from 'react';
 import ExpressionItemTextField from './ExpressionItemTextField.jsx';
+import assign from 'object.assign';
 
 class ExpressionItem extends React.Component {
-    handleNameChange(ref, value) {
-        this.updateExpression(0, value);
+    handleSymbolChange(ref, value) {
+        this.updateExpression('symbol', value);
     }
 
     handleExprChange(ref, value) {
-        this.updateExpression(1, value);
+        this.updateExpression('expr', value);
     }
 
-    updateExpression(index, value) {
-        let parts = ['', ''];
-        if (this.props.expr.indexOf('=') !== -1) {
-            parts = this.props.expr.split('=');
+    updateExpression(type, value) {
+        let changedExpr = assign({}, this.props.expr);
+        if (type === 'symbol') {
+            changedExpr.assignment.symbol = value;
+        } else if (type === 'expr') {
+            changedExpr.assignment.expr = value;
         }
-        parts[index] = value;
-        this.props.updateExpression(parts.join('='));
+
+        this.props.updateExpression(changedExpr);
     }
 
     render() {
         let name = 'exprItem'+this.props.index;
-        let value = this.props.expr || '';
-        let parts = ['', ''];
-        if (value.indexOf('=') !== -1) {
-            parts = this.props.expr.split('=');
-        }
+        let symbol = this.props.expr.assignment.symbol;
+        let value = this.props.expr.assignment.expr;
 
         let nameField = {
             ref:             name+'_name',
-            value:           parts[0],
+            value:           symbol,
             type:            'text',
             label:           'Assignment name',
             required:        true,
@@ -38,7 +38,7 @@ class ExpressionItem extends React.Component {
 
         let exprField = {
             ref:             name+'_expr',
-            value:           parts[1],
+            value:           value,
             type:            'text',
             label:           'Assignment expression',
             required:        true,
@@ -68,7 +68,8 @@ class ExpressionItem extends React.Component {
         }
 
         let removeButton = '';
-        if (parts[0] !== 'total') {
+        let symbolField = ( <p>{symbol}</p> );
+        if (symbol !== 'total') {
             removeButton = (
                 <button
                     className="expressionEditor__item-button fi-x warning"
@@ -76,16 +77,19 @@ class ExpressionItem extends React.Component {
                     onClick={this.props.removeExpression}>
                 </button>
             );
+            symbolField = (
+                <ExpressionItemTextField
+                    labelledBy="symbolName"
+                    field={nameField}
+                    handleChange={this.handleSymbolChange.bind(this)}
+                    handleError={function() {}} />
+            );
         }
 
         return (
             <div key={this.props.index} className="expressionEditor__item row">
                 <div className="medium-2 columns">
-                    <ExpressionItemTextField
-                        labelledBy="symbolName"
-                        field={nameField}
-                        handleChange={this.handleNameChange.bind(this)}
-                        handleError={function() {}} />
+                    {symbolField}
                 </div>
                 <div className="medium-7 columns">
                     <ExpressionItemTextField

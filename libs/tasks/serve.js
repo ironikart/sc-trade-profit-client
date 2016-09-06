@@ -7,7 +7,7 @@ var gulp = require('gulp');
 
 gulp.task('serve', ['setWatch', 'build'], function() {
     global.sync.init({
-        open:   true,
+        open:   false,
         server: {
             baseDir: 'build'
         },

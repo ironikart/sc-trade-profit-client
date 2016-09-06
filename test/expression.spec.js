@@ -1,43 +1,47 @@
 /*global describe, it*/
 import expect from 'expect';
-import Expression from '../src/app/util/Expression';
+import { parse, run } from '../src/app/util/expression';
 
 describe('User actions', () => {
     it('can be run with basic math', () => {
-        let expr = new Expression([
+        let expr = parse([
             'total=a + b',
             'multiply=total * 10'
         ]);
 
         const scope = {a: 2, b: 4};
 
-        let result = expr.run(scope);
+        let result = run(scope, expr);
 
         expect(result).toInclude({'total': 6});
         expect(result).toInclude({'multiply': 60});
+
+        expect(Array.isArray(expr)).toEqual(true);
     });
 
     it ('can handle conditions', () => {
-        let expr = new Expression([
+        let expr = parse([
             'total=a + b',
             'multiply=total*10',
             '  AND total >= 10'
         ]);
 
-        let failCondition = expr.run({a: 1, b: 1});
+        expect(expr[1].conditions.length).toEqual(1);
+
+        let failCondition = run({a: 1, b: 1}, expr);
 
         expect(failCondition).toInclude({'total': 2});
         // Failed conditions will assign a 0 value right now.
         expect(failCondition).toInclude({'multiply': 0});
 
-        let passCondition = expr.run({a: 5, b: 5});
+        let passCondition = run({a: 5, b: 5}, expr);
 
         expect(passCondition).toInclude({'total': 10});
         expect(passCondition).toInclude({'multiply': 100});
     });
 
     it('supports descriptions', () => {
-        let expr = new Expression([
+        let expr = parse([
             'total=a + b',
             '#> A single line description.',
             '#> A multi ',
@@ -46,19 +50,10 @@ describe('User actions', () => {
         ]);
 
         const scope = {a: 3, b: 3};
-        let result = expr.run(scope);
+        let result = run(scope, expr);
 
         expect(result).toInclude({'multiply': 60});
-
-        const jsonExport = expr.toJSON();
-
-        expect(jsonExport.length).toEqual(2);
-        expect(jsonExport[0].assignment.name).toEqual('total');
-        expect(typeof jsonExport[0].assignment.expr).toEqual('object');
-        expect(jsonExport[1].assignment.name).toEqual('multiply');
-        expect(jsonExport[1].description.length).toEqual(3);
-        expect(jsonExport[1].description[0]).toEqual('A single line description.');
-        expect(jsonExport[1].description[1]).toEqual('A multi ');
-        expect(jsonExport[1].description[2]).toEqual('line description.');
+        expect(expr[0].description.length).toEqual(0);
+        expect(expr[1].description.length).toEqual(3);
     });
 });

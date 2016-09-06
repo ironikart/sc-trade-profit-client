@@ -1,13 +1,12 @@
 import assign from 'object.assign';
-
-// TODO: remove duplicated code.
+import { parse } from '../util/expression';
 
 function addSet(state, action) {
     let clone = assign({}, state);
     clone.sets.push({
         label:  action.setName,
         output: 'total',
-        expr:   ['total=sell - buy']
+        expr:   parse(['total=sell - buy'])
     });
     clone.currentIndex = clone.sets.length - 1;
     return clone;

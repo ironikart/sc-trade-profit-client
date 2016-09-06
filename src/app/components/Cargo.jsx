@@ -1,16 +1,11 @@
 import React from 'react';
-import assign from 'object.assign';
 
 class Cargo extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            cargo:         props.cargo,
-            totalBuy:      0,
-            totalSell:     0,
-            totalMass:     0,
-            totalQuantity: 0
+            cargo: props.cargo
         };
     }
 
@@ -20,64 +15,22 @@ class Cargo extends React.Component {
         });
     }
 
-    componentDidMount() {
-        this.calculate();
-    }
-
     isEmptyValue(value) {
         return /^\s*$/.test(''+value);
     }
 
-    calculate() {
-        let total = {
-            totalBuy:      0,
-            totalSell:     0,
-            totalMass:     0,
-            totalQuantity: 0
-        };
-
-        this.state.cargo.forEach((item) => {
-            let quantity = 0;
-            if (Number.isNaN(item.quantity) === false && item.quantity !== '') {
-                quantity = parseInt(item.quantity, 10);
-            }
-
-            if (Number.isNaN(item.buy) === false && item.buy !== '') {
-                total.totalBuy += quantity * parseInt(item.buy, 10);
-            }
-
-            if (Number.isNaN(item.sell) === false && item.sell !== '') {
-                total.totalSell += quantity * parseInt(item.sell, 10);
-            }
-
-            if (Number.isNaN(item.mass) === false && item.mass !== '') {
-                total.totalMass += quantity * parseFloat(item.mass);
-            }
-
-            total.totalQuantity += quantity;
-        });
-
-        this.setState(assign(this.state, total));
-
-        this.props.updateScope(total);
-    }
-
     addCargo() {
-        let cargo = this.state.cargo;
+        let cargo = this.props.cargo;
 
-        cargo.push({
+        let item = {
             name:     'Widget #'+(cargo.length + 1),
             buy:      0,
             sell:     0,
             quantity: 0,
             mass:     0
-        });
+        };
 
-        this.setState({
-            cargo: cargo
-        });
-
-        this.calculate();
+        this.props.addCargo(item.name, item.buy, item.sell, item.quantity, item.mass);
     }
 
     updateCargoItem(type, index, e) {
@@ -88,17 +41,16 @@ class Cargo extends React.Component {
         }
 
         this.props.updateCargo(index, type, value);
-        this.calculate();
     }
 
     removeCargoItem(index) {
         this.props.removeCargo(index);
-        this.calculate();
     }
 
     render() {
         return (
             <div className="manifest__cargo">
+                <h2>Cargo</h2>
                 <table id="cargo">
                     <thead>
                         <tr>
@@ -159,10 +111,10 @@ class Cargo extends React.Component {
                     <tfoot>
                         <tr>
                             <td>Totals:</td>
-                            <td>{this.state.totalBuy} UEC</td>
-                            <td>{this.state.totalSell} UEC</td>
+                            <td>{this.props.scope.totalBuy} UEC</td>
+                            <td>{this.props.scope.totalSell} UEC</td>
                             <td></td>
-                            <td>{this.state.totalMass} tons</td>
+                            <td>{this.props.scope.totalMass} tons</td>
                             <td></td>
                         </tr>
                     </tfoot>

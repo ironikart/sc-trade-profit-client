@@ -3,6 +3,7 @@ var gulp = require('gulp');
 var path = require('path');
 var gutil = require('gulp-util');
 var sourcemaps = require('gulp-sourcemaps');
+var envify = require('envify/custom');
 var src = 'src/app/index.jsx';
 var b;
 
@@ -41,9 +42,15 @@ gulp.task('browserify', function() {
         debug:   true
     });
 
-    b.transform({
-        global: true
-    }, 'uglifyify');
+    if (process.env.NODE_ENV === 'production') {
+        b.transform({
+            global: true
+        }, 'uglifyify');
+    }
+
+    b.transform(envify({
+        NODE_ENV: process.env.NODE_ENV
+    }));
 
     b.on('update', doBundle);
     b.on('log', gutil.log.bind(gutil, 'Browserify'));
