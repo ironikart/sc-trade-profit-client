@@ -30,7 +30,7 @@ function importSet(raw) {
 
     // Filter out comments.
     lines = lines.filter(function(line) {
-        if (/^#/.test(line)) {
+        if (/^#[^\>]+/.test(line)) {
             return false;
         }
         return true;
@@ -59,7 +59,22 @@ function importSet(raw) {
 
 function exportSet(name, expr) {
     name = name.replace(/\n+/, '');
-    let lines = [exportVersion, name].concat(expr);
+    let lines = [exportVersion, name];
+    expr.forEach((item) => {
+        if (item.hasOwnProperty('description')) {
+            item.description.forEach((description) => {
+                lines.push('#> '+description);
+            });
+        }
+
+        lines.push(item.assignment.line);
+
+        if (item.hasOwnProperty('conditions')) {
+            item.conditions.forEach((condition) => {
+                lines.push('  '+condition.logic+' '+(condition.expr || condition.value));
+            });
+        }
+    });
     return lines.join('\n');
 }
 

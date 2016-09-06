@@ -1,11 +1,12 @@
 import React from 'react';
 import ExpressionResult from './ExpressionResult.jsx';
 import ExpressionItem from './ExpressionItem.jsx';
+import ExportExpressionSet from './ExportExpressionSet.jsx';
+import ImportExpressionSet from './ImportExpressionSet.jsx';
 import { importSet, exportSet } from '../util/set';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { storeJSON, clear } from '../util/local_store';
 import Manifest from './Manifest.jsx';
-import assign from 'object.assign';
 
 class ExpressionEditor extends React.Component {
     constructor(props) {
@@ -13,14 +14,13 @@ class ExpressionEditor extends React.Component {
 
         this.state = {
             error: null,
-            scope: {
-                totalBuy:      0,
-                totalSell:     0,
-                totalMass:     0,
-                totalQuantity: 0
-            },
-            set: this.getCurrentSet(props)
+            set:   this.getCurrentSet(props)
         };
+    }
+
+    componentWillMount() {
+        // Run an initial calculation.
+        this.props.calculate();
     }
 
     componentWillReceiveProps(props) {
@@ -39,6 +39,7 @@ class ExpressionEditor extends React.Component {
 
     handleSetChange(e) {
         this.props.setCurrent(e.target.selectedIndex);
+        this.props.calculate();
     }
 
     handleAddSetKeyUp(e) {
@@ -75,15 +76,6 @@ class ExpressionEditor extends React.Component {
         });
     }
 
-    handleImport() {
-        try {
-            importSet(this._import.value);
-            this._import.value = '';
-        } catch (e) {
-            this.setError(e.toString());
-        }
-    }
-
     handleSave() {
         storeJSON('expressions', this.props.expressions);
         storeJSON('manifest', this.props.manifest);
@@ -96,30 +88,11 @@ class ExpressionEditor extends React.Component {
         alert('Saved data reset');
     }
 
-    copyExportToClipboard() {
-        this._export.select();
-        let successful = document.execCommand('copy');
-        if (!successful) {
-            this.setState({
-                error: 'Unable to copy, your browser may not support it.'
-            });
-        } else {
-            alert('Copied!');
-        }
-    }
-
-    updateScope(results) {
-        this.setState({
-            scope: assign(this.state.scope, results)
-        });
-    }
-
     render() {
         let props = this.props;
         let currentIndex = props.expressions.currentIndex;
         let sets = props.expressions.sets;
         let currentSet = this.state.set;
-        let outputProp = currentSet.output;
         let lastExprIndex = currentSet.expr.length - 1;
 
         let error = '';
@@ -149,15 +122,12 @@ class ExpressionEditor extends React.Component {
             </div>
         );
 
-        // Automatically export the data each time this is rendered.
-        let exported = exportSet(currentSet.label, currentSet.expr);
-
         let symbols = [];
-        for (var symbolName in this.state.scope) {
-            if (typeof this.state.scope[symbolName] === 'number') {
+        for (var symbolName in this.props.manifest.scope) {
+            if (typeof this.props.manifest.scope[symbolName] === 'number') {
                 symbols.push({
                     name:  symbolName,
-                    value: this.state.scope[symbolName]
+                    value: this.props.manifest.scope[symbolName]
                 });
             }
         }
@@ -193,13 +163,11 @@ class ExpressionEditor extends React.Component {
                             setCurrentShip={this.props.setCurrentShip}
                             addCargo={this.props.addCargo}
                             removeCargo={this.props.removeCargo}
-                            updateCargo={this.props.updateCargo}
-                            updateScope={this.updateScope.bind(this)} />
+                            updateCargo={this.props.updateCargo} />
                         <ExpressionResult
+                            {...this.props.manifest}
                             handleError={this.setError.bind(this)}
-                            output={outputProp}
-                            expr={currentSet.expr}
-                            scope={this.state.scope} />
+                            set={currentSet} />
                     </TabPanel>
                     <TabPanel>
                         {switcher}
@@ -231,6 +199,7 @@ class ExpressionEditor extends React.Component {
                                         <ExpressionItem
                                         index={i}
                                         expr={expr}
+                                        updateDescription={props.updateDescription.bind(this, currentIndex, i)}
                                         updateExpression={props.updateExpression.bind(this, currentIndex, i)}
                                         removeExpression={props.removeExpression.bind(this, currentIndex, i)}
                                         moveExpressionUp={props.moveExpression.bind(this, currentIndex, i, 'up')}
@@ -271,25 +240,10 @@ class ExpressionEditor extends React.Component {
                     </TabPanel>
                     <TabPanel>
                         {switcher}
-                        <div className="row">
-                            <h2>Export</h2>
-                            <p>You can add comments by prefixing lines with a <em>#</em> symbol (copy and paste into text editor).</p>
-                            <textarea id="exportSet" ref={(elem) => this._export = elem} rows="10" cols="50" value={exported} readOnly={true}></textarea>
-                            <button className="button align-right" onClick={this.copyExportToClipboard.bind(this)}>
-                                <i className="fi-clipboard"></i>
-                                <span>Copy</span>
-                            </button>
-                        </div>
+                        <ExportExpressionSet currentSet={currentSet} setError={this.setError.bind(this)} />
                     </TabPanel>
                     <TabPanel>
-                        <div>
-                            <h2>Import</h2>
-                            <p>Import a set by pasting the pre-formatted text here.</p>
-                            <div>
-                                <textarea id="importSet" ref={(elem) => this._import = elem} rows="10" cols="50"></textarea>
-                            </div>
-                            <button onClick={this.handleImport.bind(this)} className="button">Import</button>
-                        </div>
+                        <ImportExpressionSet {...this.props} setError={this.setError.bind(this)} />
                     </TabPanel>
                 </Tabs>
             </div>

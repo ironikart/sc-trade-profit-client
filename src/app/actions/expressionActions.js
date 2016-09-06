@@ -71,6 +71,15 @@ function moveExpression(setIndex, exprIndex, direction) {
     };
 }
 
+function updateDescription(setIndex, exprIndex, description) {
+    return {
+        type: 'EXPR_UPDATE_DESCRIPTION',
+        setIndex,
+        exprIndex,
+        description
+    };
+}
+
 module.exports = {
     addSet,
     removeSet,
@@ -80,5 +89,6 @@ module.exports = {
     addCondition,
     updateExpression,
     removeExpression,
-    moveExpression
+    moveExpression,
+    updateDescription
 };

@@ -46,11 +46,27 @@ function setCurrentShip(id) {
     };
 }
 
+function updateScopeValue(name, value) {
+    return {
+        type: 'SET_SCOPE_VALUE',
+        name,
+        value
+    };
+}
+
+function calculate() {
+    return {
+        type: 'CALCULATE'
+    };
+}
+
 module.exports = {
     addCargo,
     updateCargo,
     removeCargo,
     setCurrentShip,
     setDestination,
-    setOrigin
+    setOrigin,
+    updateScopeValue,
+    calculate
 };
