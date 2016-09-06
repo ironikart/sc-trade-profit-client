@@ -109,10 +109,10 @@ class ExpressionEditor extends React.Component {
 
         let switcher = (
             <div className="row">
-                <div className="medium-3 columns">
+                <div className="col u-1of4">
                     <label htmlFor="changeSet" className="text-right middle">Current Expression Set</label>
                 </div>
-                <div className="medium-9 columns">
+                <div className="col col-grow">
                     <select onChange={this.handleSetChange.bind(this)} value={currentIndex}>
                         {sets.map(function(set, i) {
                             return ( <option key={i} value={i}>{set.label}</option> );
@@ -183,15 +183,16 @@ class ExpressionEditor extends React.Component {
                             </ul>
                         </div>
                         <h2>Expressions</h2>
-                        <div className="expressionEditor__items-headers">
-                            <strong className="medium-2 columns" id="symbolName">Symbol Name</strong>
-                            <strong className="medium-10 columns" id="expressionName">Expression</strong>
+                        <div className="expressionEditor__items-headers row">
+                            <strong className="col" id="symbolName">Symbol Name</strong>
+                            <strong className="col" id="expressionName">Expression</strong>
                         </div>
                         <div className="expressionEditor__items">
                             <button
                                 className="fi-plus expressionEditor__item-button"
                                 aria-label="Insert expression (before)"
                                 onClick={this.addExpression.bind(this, 0)}>
+                                Insert
                             </button>
                             {currentSet.expr.map((expr, i) => {
                                 return ( 
@@ -209,15 +210,18 @@ class ExpressionEditor extends React.Component {
                                             className="fi-plus expressionEditor__item-button"
                                             aria-label="Insert expression (after)"
                                             onClick={this.addExpression.bind(this, i + 1)}>
+                                            Insert
                                         </button>
                                     </div>
                                 );
                             })}
                         </div>
-                        <button className="button alert" onClick={props.removeSet.bind(this, currentIndex)}>
-                            <i className="fi-trash"></i>
-                            <span> Remove current set</span>
-                        </button>
+                        <p>
+                            <button className="button alert" onClick={props.removeSet.bind(this, currentIndex)}>
+                                <i className="fi-trash"></i>
+                                <span> Remove current set</span>
+                            </button>
+                        </p>
                     </TabPanel>
                     <TabPanel>
                         <p>Create a new expression set.</p>

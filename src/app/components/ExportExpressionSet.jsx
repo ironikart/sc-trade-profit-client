@@ -20,7 +20,7 @@ class ExportExpressionSet extends React.Component {
         let exported = exportSet(this.props.currentSet.label, this.props.currentSet.expr);
 
         return (
-            <div className="row">
+            <div className="expressionEditor__export">
                 <h2>Export</h2>
                 <p>You can add comments by prefixing lines with a <em>#</em> symbol (copy and paste into text editor).</p>
                 <textarea id="exportSet" ref={(elem) => this._export = elem} rows="10" cols="50" value={exported} readOnly={true}></textarea>

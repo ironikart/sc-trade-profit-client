@@ -1,14 +1,89 @@
 @import "node_modules/normalize-scss/sass/normalize/_import-now.scss";
+@import "./mixins.scss";
 
-html {
-    font-family: 'Abel';
+*, *:before, *:after {
+    box-sizing: inherit;
 }
 
-.appBody,
-.footer,
-.intro {
+html {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+body {
+    font-family: 'Abel';
+    font-size: 1em;
+    overflow-y: scroll;
+    line-height: 1.4;
+    padding: 0;
+    margin: 0;
+    color: #222;
+}
+
+img {
+    max-width: 100%;
+}
+
+input,
+button,
+select,
+textarea {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+@-ms-viewport{
+    width: device-width;
+}
+
+@page {
+    margin: 0.5cm;
+}
+
+// --- App Styles --- //
+
+select,
+textarea,
+input[type="number"],
+input[type="text"] {
+    padding: .6em;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 0;
+    min-height: 1em;
+}
+
+body {
+    background: #333;
+    padding: 0;
+    margin: 0;
+}
+
+[readonly] {
+    background: #eff0f1;
+}
+
+.main {
+    h1, h2, h3, h4, label {
+        font-family: 'Courier';
+    }
+
+    background: #efefef;
     max-width: 60em;
-    margin: 1em auto;
+    margin: 0 auto;
+    padding: 1em;
+}
+
+.callout {
+    background: #fff;
+    border: 1px solid #222;
+    padding: .5em;
+    margin: .5em;
 }
 
 .expressionEditor {
@@ -16,6 +91,7 @@ html {
         border-bottom: 1px solid #ccc;
         padding-bottom: 1em;
         margin-top: .5em;
+        margin-bottom: .5em;
 
         &-button {
             padding: .5em;
@@ -29,9 +105,13 @@ html {
         }
     }
 
-    &__result-text {
-        font-size: 2rem;
+    &__items {
+        margin-bottom: 1em;
     }
+
+    // &__result-text {
+    //     font-size: 2rem;
+    // }
 }
 
 .hidden-toggle {
@@ -39,5 +119,121 @@ html {
 
     &:target {
         display: block;
+    }
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.clearfix {
+    &:before,
+    &:after {
+        content: '';
+        display: table;
+        line-height: 0;
+    }
+    &:after {
+        clear: both;
+    }
+    *zoom: 1;
+}
+
+.float-right {
+    float: right;
+}
+
+.float-left {
+    float: left;
+}
+
+.button {
+    background: #ccc;
+    border: 0;
+    border-right: 1px solid darken(#ccc, 15%);
+    border-bottom: 1px solid darken(#ccc, 15%);
+    padding: .4em .8em;
+}
+
+.data-table {
+    width: 100%;
+    border: 1px solid;
+    border-collapse: collapse;
+    margin: .5em 0;
+    & td {
+        border: 1px solid #222;
+    }
+
+    & td, & th {
+        padding: .4em;
+    }
+
+    & th {
+        font-family: 'Courier';
+        font-weight: 400;
+        text-align: left;
+    }
+}
+
+@media (min-width: 37.5em) {
+    .row {
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+
+        .col {
+            flex: 0 1 auto;
+        }
+
+        .col-grow {
+            flex-grow: 1;
+        }
+
+        .col-shrink {
+            flex-shink: 1;
+        }
+
+        .box {
+            padding: 0 .6em;
+        }
+    }
+}
+
+@for $i from 2 through 12 {
+    .u-1of#{$i} {
+        width: percentage(1 / $i);
+    }
+}
+
+.uec {
+    &:before {
+        font-size: .8em;
+        content: ' ¤';
+    }
+    &:after {
+        content: ' UEC';
+        vertical-align: text-top;
+        font-size: .8em;
+        color: #000;
+    }
+}
+
+.manifest {
+    &__ports,
+    &__ship,
+    &__cargo {
+        padding-bottom: 1em;
+        margin-bottom: .5em;
+        border-bottom: 1px solid #222;
     }
 }

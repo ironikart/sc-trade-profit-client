@@ -95,31 +95,37 @@ class ExpressionItem extends React.Component {
 
         return (
             <div key={this.props.index} className="expressionEditor__item row">
-                <div className="medium-2 columns">
-                    {symbolField}
+                <div className="col u-1of6">
+                    <div className="box">
+                        {symbolField}
+                    </div>
                 </div>
-                <div className="medium-7 columns">
-                    <ExpressionItemTextField
-                        labelledBy="expressionName"
-                        field={exprField}
-                        handleChange={this.handleExprChange.bind(this)}
-                        handleError={function() {}} />
+                <div className="col col-grow">
+                    <div className="box">
+                        <ExpressionItemTextField
+                            labelledBy="expressionName"
+                            field={exprField}
+                            handleChange={this.handleExprChange.bind(this)}
+                            handleError={function() {}} />
 
-                    <div className="expressionEditor__item-description">
-                        <textarea
-                            rows="4"
-                            cols="50"
-                            value={description}
-                            ref={(elem) => this._description = elem}
-                            onChange={this.handleDescriptionChange.bind(this)}>
-                        </textarea>
+                        <div className="expressionEditor__item-description">
+                            <textarea
+                                rows="4"
+                                cols="50"
+                                value={description}
+                                ref={(elem) => this._description = elem}
+                                onChange={this.handleDescriptionChange.bind(this)}>
+                            </textarea>
+                        </div>
                     </div>
                 </div>
 
-                <div className="medium-3 columns">
-                    {removeButton}
-                    {moveUpButton}
-                    {moveDownButton}
+                <div className="col u-1of6">
+                    <div className="box">
+                        {removeButton}
+                        {moveUpButton}
+                        {moveDownButton}
+                    </div>
                 </div>
             </div>
         );

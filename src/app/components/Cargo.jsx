@@ -50,8 +50,8 @@ class Cargo extends React.Component {
     render() {
         return (
             <div className="manifest__cargo">
-                <h2>Cargo</h2>
-                <table id="cargo">
+                <h3>Cargo</h3>
+                <table id="cargo" className="data-table">
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -110,9 +110,9 @@ class Cargo extends React.Component {
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td>Totals:</td>
-                            <td>{this.props.scope.totalBuy} UEC</td>
-                            <td>{this.props.scope.totalSell} UEC</td>
+                            <th>Totals:</th>
+                            <td><span className="uec">{this.props.scope.totalBuy}</span></td>
+                            <td><span className="uec">{this.props.scope.totalSell}</span></td>
                             <td></td>
                             <td>{this.props.scope.totalMass} tons</td>
                             <td></td>
