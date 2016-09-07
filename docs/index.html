@@ -3,46 +3,23 @@
     <head>
         <meta charset="utf-8" />
         <title>Trade Profit Calculator</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/foundation/6.2.3/foundation.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css">
         <link rel="stylesheet" href="main.css">
     </head>
     <body class="no-js">
+      <div class="main">
         <header class="intro callout">
             <h1>Trade Profit Calculator</h1>
-            <em>for <a href="https://robertsspaceindustries.com/">Star Citizen</a> by <a href="https://forums.robertsspaceindustries.com/profile/51987/Spraynpray">Spraynpray</a></em>
-            <p>A prototype that features a customisable expression system to apply profit calculations to buy and sell activity in Star Citizen</p>
-            <p>Bear in mind this is a working prototype and trade isn't implemented in the alpha yet (due 3.0.0). Everything here is subject to change.</p>
+            <p>A prototype that features a customisable expression system to apply profit calculations to buy and sell activity in Star Citizen. Bear in mind this is a working prototype and trade isn't implemented in the alpha yet (due 3.0). Everything here is subject to change.</p>
+            <p><a id="clearData" href="#">Clear save data.</a> (Resets saved data which may not be valid as data structures change during development)</p>
         </header>
         <div class="appBody" id="appBody"></div>
         <footer class="footer">
-            <a href="#license" class="license">license</a>
-            <div id="license" class="hidden-toggle">
-<pre>
-The MIT License (MIT)
-
-Copyright (c) Anthony Barnes
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-</pre>
-            </div>
+          <p><em>Created for <a href="https://robertsspaceindustries.com/">Star Citizen</a> by <a href="https://forums.robertsspaceindustries.com/profile/51987/Spraynpray">Spraynpray</a></em></p>
+          <p>Source code on <a href="https://github.com/ironikart/sc-trade-profit-client"><i class="fi-social-github"></i> Github</a> | <a href="https://github.com/ironikart/sc-trade-profit-client/issues">Issues</a></p>
         </footer>
+      </div>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -52,6 +29,14 @@ THE SOFTWARE.
   ga('create', 'UA-83597806-1', 'auto');
   ga('send', 'pageview');
 
+</script>
+<script>
+var clearData = document.getElementById('clearData');
+clearData.addEventListener('click', function() {
+  window.localStorage.removeItem('expressions');
+  window.localStorage.removeItem('manifest');
+  alert('cleared');
+}, false);
 </script>
         <script src="bundle.js"></script>
     </body>
