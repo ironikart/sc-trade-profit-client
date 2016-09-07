@@ -1,6 +1,14 @@
 import assign from 'object.assign';
 import store from '../store';
 import { run } from '../util/expression';
+import * as graph from '../util/graph';
+import * as c from '../constants';
+
+// Cache a jump point graph.
+let pointGraph = new graph.Graph();
+c.pointsGraph.forEach((edge) => {
+    pointGraph.addEdge(edge[0], edge[1]);
+});
 
 function calculateResults(state) {
     let clone = assign({}, state);
@@ -74,7 +82,7 @@ function setShip(state, action) {
     let clone = assign({}, state);
     clone.currentShipId = action.id;
 
-    let currentShip = clone.matrix.filter((ship) => {
+    let currentShip = c.matrix.filter((ship) => {
         return ship.id === action.id;
     });
 
@@ -87,22 +95,68 @@ function setShip(state, action) {
     return calculateResults(clone);
 }
 
+// Calculate a path to the chosen jump point using an undirected cyclic graph.
+function calculateSystemPath(clone) {
+    if (clone.origin !== '' && clone.destination !== '') {
+        clone.path = graph.shortestPath(pointGraph, parseFloat(clone.origin), parseFloat(clone.destination));
+        clone.scope.jumps = clone.path.length;
+    }
+
+    return clone;
+}
+
 function setDestination(state, action) {
     let clone = assign({}, state);
     clone.destination = action.system;
-    return calculateResults(clone);
+    return calculateSystemPath(calculateResults(clone));
 }
 
 function setOrigin(state, action) {
     let clone = assign({}, state);
     clone.origin = action.system;
-    return calculateResults(clone);
+    return calculateSystemPath(calculateResults(clone));
 }
 
 function updateScopeValue(state, action) {
     let clone = assign({}, state);
     clone.scope[action.name] = action.value;
     return calculateResults(clone);
+}
+
+function calculateCrewCut(clone) {
+    let totalCut = 0;
+
+    clone.crew.forEach((crew) => {
+        let cut = parseFloat(crew.cut);
+        if (Number.isNaN(cut) === false) {
+            totalCut -= cut;
+        }
+    });
+
+    clone.scope.crewCut = totalCut;
+    return clone;
+}
+
+function addCrew(state) {
+    let clone = assign({}, state);
+    clone.crew.push({
+        name: 'Crew Member #'+(clone.crew.length+1),
+        cut:  0
+    });
+
+    return calculateCrewCut(calculateResults(clone));
+}
+
+function removeCrew(state, action) {
+    let clone = assign({}, state);
+    clone.crew.splice(action.index, 1);
+    return calculateCrewCut(calculateResults(clone));
+}
+
+function updateCrew(state, action) {
+    let clone = assign({}, state);
+    clone.crew[action.index][action.prop] = action.value;
+    return calculateCrewCut(calculateResults(clone));
 }
 
 export default function manifestReducer(state = {}, action) {
@@ -123,6 +177,12 @@ export default function manifestReducer(state = {}, action) {
         return updateScopeValue(state, action);
     case 'CALCULATE':
         return calculateResults(state);
+    case 'CREW_ADD':
+        return addCrew(state);
+    case 'CREW_REMOVE':
+        return removeCrew(state, action);
+    case 'CREW_UPDATE':
+        return updateCrew(state, action);
     default:
         return state;
     }

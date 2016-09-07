@@ -1,4 +1,6 @@
 import React from 'react';
+import * as c from '../constants';
+import Select from 'react-select';
 
 class Ship extends React.Component {
 
@@ -6,9 +8,11 @@ class Ship extends React.Component {
         this.props.setCurrentShip(this.props.currentShipId);
     }
 
-    handleShipSelect(e) {
-        let id = parseFloat(e.target.value);
-        this.props.setCurrentShip(id);
+    handleShipSelect(option) {
+        let id = parseFloat(option.value);
+        if (Number.isNaN(id) === false) {
+            this.props.setCurrentShip(id);
+        }
     }
 
     handleScopeValueChange(type, e) {
@@ -16,6 +20,15 @@ class Ship extends React.Component {
     }
 
     render() {
+        let ships = c.matrix
+        .sort((a, b) => a.name > b.name ? 1 : -1)
+        .map((ship) => {
+            return {
+                label: ship.name,
+                value: ship.id
+            };
+        });
+
         return (
             <div className="manifest__ship">
                 <h3>Ship</h3>
@@ -23,19 +36,13 @@ class Ship extends React.Component {
                     <div className="col col-grow">
                         <div className="box">
                             <label htmlFor="manifest__ship-select">Select Ship</label>
-                            <select
+                            <Select
                                 name="manifest__ship-select"
-                                id="manifest__ship-select"
                                 value={this.props.currentShipId}
-                                onChange={this.handleShipSelect.bind(this)}>
-                                {this.props.matrix
-                                    .sort((a, b) => a.name > b.name ? 1 : -1)
-                                    .map((ship, i) => {
-                                    return (
-                                        <option key={i} value={ship.id}>{ship.name}</option>
-                                    );
-                                })}
-                            </select>
+                                onChange={this.handleShipSelect.bind(this)}
+                                options={ships}
+                                clearableValue="false"
+                            />
                         </div>
                     </div>
                     <div className="col u-1of6">

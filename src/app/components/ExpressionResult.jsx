@@ -36,19 +36,15 @@ class ExpressionResult extends React.Component {
     render() {
         let total = 0;
         let set = this.props.set;
-        if (this.props.result !== null && this.props.result.hasOwnProperty(set.output) === true) {
-            total = this.props.result[set.output];
-        }
+        let keysToShow = set.output;
 
         let error = '';
         if (this.state.error !== null) {
             error = ( <div className="expressionEditor__result-error callout alert">{this.state.error}</div> );
         }
 
-        let keysToShow = Object.keys(this.props.result).filter(function(item) { return item !== 'total'; });
-
         let tmpl;
-        if (this.props.cargo.length >= 1) {
+        if (this.props.result !== null && this.props.cargo.length >= 1) {
             tmpl = (
                 <div className="expressionEditor__result-text">
                     <h3>Estimated Profit</h3>
@@ -60,29 +56,20 @@ class ExpressionResult extends React.Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {keysToShow.map((key, i) => {
+                            {keysToShow.map((keyMap, i) => {
                                 return (
                                     <tr key={i}>
-                                        <td>{key}</td>
+                                        <td>{keyMap[1]}</td>
                                         <td className="text-right">
                                             <span
-                                                style={this.getTextStyle(this.props.result[key])}
-                                                className="uec">{this.props.result[key]}
+                                                style={this.getTextStyle(this.props.result[keyMap[0]])}
+                                                className="uec">{this.props.result[keyMap[0]]}
                                             </span>
                                         </td>
                                     </tr>
                                 );
                             })}
                         </tbody>
-                        <tfoot>
-                            <tr>
-                                <th>Profit</th>
-                                <td className="text-right"><span
-                                    style={this.getTextStyle(total)}
-                                    className="uec">{total}
-                                </span></td>
-                            </tr>
-                        </tfoot>
                     </table>
 
                </div>

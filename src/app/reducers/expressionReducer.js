@@ -5,8 +5,10 @@ function addSet(state, action) {
     let clone = assign({}, state);
     clone.sets.push({
         label:  action.setName,
-        output: 'total',
-        expr:   parse(['total=sell - buy'])
+        output: [
+            ['total', 'Total Profit']
+        ],
+        expr: parse(['total=sell - buy'])
     });
     clone.currentIndex = clone.sets.length - 1;
     return clone;
@@ -83,7 +85,7 @@ function moveExpression(state, action) {
 
 function importSet(state, action) {
     let clone = addSet(state, action);
-    clone.sets[clone.currentIndex].expr = parse(action.expr);
+    clone.sets[clone.currentIndex] = action.set;
     return clone;
 }
 

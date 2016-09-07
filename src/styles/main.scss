@@ -1,4 +1,5 @@
 @import "node_modules/normalize-scss/sass/normalize/_import-now.scss";
+@import "node_modules/react-select/scss/default.scss";
 @import "./mixins.scss";
 
 *, *:before, *:after {
@@ -231,7 +232,8 @@ body {
 .manifest {
     &__ports,
     &__ship,
-    &__cargo {
+    &__cargo,
+    &__crew {
         padding-bottom: 1em;
         margin-bottom: .5em;
         border-bottom: 1px solid #222;

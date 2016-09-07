@@ -160,6 +160,11 @@ class ExpressionEditor extends React.Component {
                         {switcher}
                         <Manifest
                             {...this.props.manifest}
+                            addCrew={this.props.addCrew}
+                            removeCrew={this.props.removeCrew}
+                            updateCrew={this.props.updateCrew}
+                            setOrigin={this.props.setOrigin}
+                            setDestination={this.props.setDestination}
                             setCurrentShip={this.props.setCurrentShip}
                             addCargo={this.props.addCargo}
                             removeCargo={this.props.removeCargo}

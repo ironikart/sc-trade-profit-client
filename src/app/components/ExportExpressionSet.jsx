@@ -17,7 +17,7 @@ class ExportExpressionSet extends React.Component {
 
     render() {
         // Automatically export the data each time this is rendered.
-        let exported = exportSet(this.props.currentSet.label, this.props.currentSet.expr);
+        let exported = exportSet(this.props.currentSet);
 
         return (
             <div className="expressionEditor__export">

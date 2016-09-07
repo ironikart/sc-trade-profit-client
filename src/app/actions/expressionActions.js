@@ -12,11 +12,10 @@ function addSet(setName) {
     };
 }
 
-function importSet(setName, expr) {
+function importSet(set) {
     return {
         type: 'EXPR_IMPORT_SET',
-        setName,
-        expr
+        set,
     };
 }
 

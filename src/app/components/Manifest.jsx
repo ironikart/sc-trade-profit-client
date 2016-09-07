@@ -2,6 +2,7 @@ import React from 'react';
 import Cargo from './Cargo.jsx';
 import Ship from './Ship.jsx';
 import Ports from './Ports.jsx';
+import Crew from './Crew.jsx';
 
 class Manifest extends React.Component {
     constructor(props) {
@@ -13,6 +14,7 @@ class Manifest extends React.Component {
             <div className="manifest">
                 <Ship {...this.props} />
                 <Ports {...this.props} />
+                <Crew {...this.props} />
                 <Cargo {...this.props} />
             </div>
         );

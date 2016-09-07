@@ -60,6 +60,28 @@ function calculate() {
     };
 }
 
+function addCrew() {
+    return {
+        type: 'CREW_ADD'
+    };
+}
+
+function removeCrew(index) {
+    return {
+        type: 'CREW_REMOVE',
+        index
+    };
+}
+
+function updateCrew(index, prop, value) {
+    return {
+        type: 'CREW_UPDATE',
+        index,
+        prop,
+        value
+    };
+}
+
 module.exports = {
     addCargo,
     updateCargo,
@@ -68,5 +90,8 @@ module.exports = {
     setDestination,
     setOrigin,
     updateScopeValue,
-    calculate
+    calculate,
+    addCrew,
+    removeCrew,
+    updateCrew
 };
