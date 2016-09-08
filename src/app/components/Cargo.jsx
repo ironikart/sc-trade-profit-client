@@ -49,7 +49,7 @@ class Cargo extends React.Component {
 
     render() {
         return (
-            <div className="manifest__cargo">
+            <div className="manifest__cargo section">
                 <h3>Cargo</h3>
                 <table id="cargo" className="data-table">
                     <thead>
@@ -102,7 +102,11 @@ class Cargo extends React.Component {
                                     />
                                 </td>
                                 <td>
-                                    <button className="alert button" onClick={this.removeCargoItem.bind(this, i)}>Remove</button>
+                                    <button
+                                        className="icon-button fi-x alert"
+                                        aria-label="Remove"
+                                        onClick={this.removeCargoItem.bind(this, i)}>
+                                    </button>
                                 </td>
                             </tr>
                         );

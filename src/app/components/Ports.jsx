@@ -44,18 +44,22 @@ class Ports extends React.Component {
                 path = (
                     <div className="manifest_route">
                         <h4>Shortest jump route</h4>
-                        <p className="box">
+                        <div className="box manifest__route-map row">
                             {this.props.path.map((systemId, i) => {
-                                return c.systems[''+systemId].name;
-                            }).join(' -- ')}
-                        </p>
+                                return (
+                                    <div key={i} className="manifest__route-map--item col col-grow">
+                                    {c.systems[''+systemId].name}
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
                 );
             }
         }//end if
 
         return (
-            <div className="manifest__ports">
+            <div className="manifest__ports section">
                 <h3>Ports</h3>
                 <div className="row">
                     <div className="col col-grow">

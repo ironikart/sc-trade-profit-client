@@ -3,23 +3,34 @@
     <head>
         <meta charset="utf-8" />
         <title>Trade Profit Calculator</title>
-        <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Electrolize" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css">
         <link rel="stylesheet" href="main.css">
     </head>
     <body class="no-js">
+      <div class="main-wrapper">
       <div class="main">
-        <header class="intro callout">
-            <h1>Trade Profit Calculator</h1>
-            <p>A prototype that features a customisable expression system to apply profit calculations to buy and sell activity in Star Citizen. Bear in mind this is a working prototype and trade isn't implemented in the alpha yet (due 3.0). Everything here is subject to change.</p>
-            <p><a id="clearData" href="#">Clear save data.</a> (Resets saved data which may not be valid as data structures change during development)</p>
+        <header class="intro row">
+            <div class="col logo">
+                <div class="box">
+                    <img src="images/starcitizen_transparent.svg" alt="" width="80px" />
+                </div>
+            </div>
+            <div class="col col-grow">
+                <header class="intro callout">
+                    <h1>Trade Profit Calculator</h1>
+                    <p class="version">[ Prototype version ]</p>
+                    <p>Estimates profits based on a <em>customisable</em> expression set to maximise game time when planning trade activities.</p>
+                    <div class="links"><a id="clearData" href="#">Clear save data.</a> | <a href="https://forums.robertsspaceindustries.com/discussion/344122/trade-profit-calculator-prototype">More info</a> | <a href="https://github.com/ironikart/sc-trade-profit-client"><i class="fi-social-github"></i> Source code</a> | <a href="https://github.com/ironikart/sc-trade-profit-client/issues">Issues</a> | Created for <a href="https://robertsspaceindustries.com/">Star Citizen</a> by <a href="https://forums.robertsspaceindustries.com/profile/51987/Spraynpray">Spraynpray</a></div>
+                </header>
+            </div>
         </header>
         <div class="appBody" id="appBody"></div>
         <footer class="footer">
-          <p><em>Created for <a href="https://robertsspaceindustries.com/">Star Citizen</a> by <a href="https://forums.robertsspaceindustries.com/profile/51987/Spraynpray">Spraynpray</a></em></p>
-          <p>Source code on <a href="https://github.com/ironikart/sc-trade-profit-client"><i class="fi-social-github"></i> Github</a> | <a href="https://github.com/ironikart/sc-trade-profit-client/issues">Issues</a></p>
+            <!-- Nothing to see here -->
         </footer>
       </div>
+      </div><!-- /.main-wrapper -->
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

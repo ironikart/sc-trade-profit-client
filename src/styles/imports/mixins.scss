@@ -1,0 +1,74 @@
+@mixin box-shadow($params) {
+    -webkit-box-shadow: $params;
+       -moz-box-shadow: $params;
+            box-shadow: $params;
+}
+
+@mixin font-size($sizeValue: 1) {
+    @include rem-attr(font-size, $sizeValue);
+}
+
+// Express the value of an attribute using rems falling back to pixels
+@mixin rem-attr($attr, $sizeValue: 1){
+    #{$attr}: ($sizeValue * $base-font-pixel) + px;
+    #{$attr}: $sizeValue + rem;
+}
+
+// Transition shortcut
+@mixin transition($params...) {
+    -webkit-transition: $params;
+       -moz-transition: $params;
+            transition: $params;
+}
+
+// Apply a prefixed transformation
+@mixin transform($params) {
+  -webkit-transform: $params; // Chrome, Safari 3.1+
+     //-moz-transform: $params; // Firefox 3.5-15
+      -ms-transform: $params; // IE 9
+          transform: $params;
+}
+
+@mixin rotate($deg) {
+    $msRotVal: (((360 + $deg) % 360) / 90);   // Modulo lets us handle negative values.
+    @include transform(rotate($deg + deg));
+    filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=#{$msRotVal});
+}
+
+
+@mixin block-glowing-effect($selector:focus, $fade-time:300ms, $glowing-effect-color: $feature-light, $size: 1rem, $opacity: .4) {
+    -webkit-transition: -webkit-box-shadow $fade-time, border-color $fade-time ease-in-out;
+       -moz-transition: -moz-box-shadow $fade-time, border-color $fade-time ease-in-out;
+            transition: box-shadow $fade-time, border-color $fade-time ease-in-out;
+
+    &:#{$selector} {
+        @include box-shadow(0 0 $size rgba($glowing-effect-color, $opacity));
+        border-color: $glowing-effect-color;
+    }
+}
+
+@mixin opacity($value) {
+    $decimal-value: $value/100;
+    -webkit-opacity: $decimal-value;
+       -moz-opacity: $decimal-value;
+            opacity: $decimal-value;
+    -ms-filter: #{"alpha(opacity=" + $value + ")"};
+    filter: alpha(opacity=$value);
+}
+
+@mixin feature-widget-one($colour: #fff, $selector: after) {
+    &:#{$selector} {
+        position: absolute;
+        @content;
+    }
+}
+
+@mixin bg-grid($bg-colour: transparent, $thick-colour: rgba(255,255,255,.6), $thin-colour: rgba(255,255,255,.3), $thick-width: 2px, $thin-width: 1px) {
+    background-color: $bg-colour;
+    background-image: linear-gradient($thick-colour $thick-width, transparent $thick-width),
+    linear-gradient(90deg, $thick-colour $thick-width, transparent $thick-width),
+    linear-gradient($thin-colour $thin-width, transparent $thin-width),
+    linear-gradient(90deg, $thin-colour $thin-width, transparent $thin-width);
+    background-size:100px 100px, 100px 100px, 20px 20px, 20px 20px;
+    background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px;
+}

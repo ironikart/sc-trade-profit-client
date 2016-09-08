@@ -1,0 +1,87 @@
+.ReactTabs__TabList {
+    margin: 1rem 0;
+    padding: 1rem 0;
+    list-style: none;
+    border-bottom: 1px solid $tab-colour-highlight;
+    display: block;
+    width: 100%;
+    min-height: 2rem;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 5px,
+        rgba($tab-colour, .3) 5px,
+        rgba(darken($tab-colour, 10%), .3) 10px
+    );
+
+    position: relative;
+
+    &:before {
+        content: '';
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        border-top: 1px solid $tab-colour-highlight;
+        border-left: 1px solid $tab-colour-highlight;
+        top: 0;
+        left: 0;
+    }
+
+    &:after {
+        content: '';
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        border-top: 1px solid $tab-colour-highlight;
+        border-right: 1px solid $tab-colour-highlight;
+        top: 0;
+        right: 0;
+    }
+}
+
+.ReactTabs__Tab {
+    display: inline-block;
+    text-transform: uppercase;
+    color: #efefef;
+    padding: .4rem .8rem;
+    cursor: pointer;
+
+    position: relative;
+
+    &--selected {
+        color: $tab-colour-highlight;
+        text-shadow: 0 0 1.6rem rgba($tab-colour-highlight, .5);
+
+            &:before {
+                content: '';
+                position: absolute;
+                width: 5px;
+                height: 5px;
+                border-top: 1px solid $tab-colour-highlight;
+                border-left: 1px solid $tab-colour-highlight;
+                top: 0;
+                left: 0;
+            }
+
+            &:after {
+                content: '';
+                position: absolute;
+                width: 5px;
+                height: 5px;
+                border-bottom: 1px solid $tab-colour-highlight;
+                border-right: 1px solid $tab-colour-highlight;
+                bottom: 0;
+                right: 0;
+            }
+    }
+}
+
+@media (min-width: 37.5em) {
+    .ReactTabs__TabList {
+        text-align: center;
+    }
+
+    .ReactTabs__Tab {
+        display: inline-block;
+    }
+}

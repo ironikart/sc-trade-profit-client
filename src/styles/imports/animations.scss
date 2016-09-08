@@ -1,0 +1,24 @@
+@keyframes text-input-highlight {
+    0% {
+        border: 1px solid $border-dark;
+        color: darken($input-text-colour, 15%);
+    }
+    80% {
+        border: 1px solid $border-light;
+        color: darken($input-text-colour, 5%);
+        @include box-shadow(inset 0 0 .8rem rgba($feature-light, .3));
+    }
+
+    90% {
+        border: 1px solid $border-dark;
+        color: lighten($input-text-colour, 15%);
+        @include box-shadow(inset 0 0 1rem rgba($feature-light, 0));
+    }
+
+    100% {
+        color: $input-text-colour;
+        border: 1px solid $feature-light;
+        @include box-shadow(inset 0 0 1rem rgba($feature-light, .3));
+        border-color: $feature-light;
+    }
+}

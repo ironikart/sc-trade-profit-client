@@ -1,0 +1,25 @@
+// Convert a pixel value to EM units
+@function pxToEm($pixel) {
+  @return $pixel/$base-font-pixel + em;
+}
+
+// Convert a pixel value to REM units
+@function pxToRem($pixel) {
+  @return $pixel/$base-font-pixel + rem;
+}
+
+// Strip unit taken from foundation
+@function stripUnit($num) {
+  @return $num / ($num * 0 + 1);
+}
+
+// String replace
+@function str-replace($string, $search, $replace: "") {
+    $index: str-index($string, $search);
+
+    @if $index {
+        @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+    }
+
+    @return $string;
+}

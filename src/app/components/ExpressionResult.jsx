@@ -71,20 +71,19 @@ class ExpressionResult extends React.Component {
                             })}
                         </tbody>
                     </table>
-
                </div>
             );
         } else {
             tmpl = (
                 <div className="expressionEditor__result-text">
                     <h3>Estimated Profit</h3>
-                    <p>Add cargo and associated values to estimate profits.</p>
+                    <div className="callout">Add cargo and enter values to obtain profit estimates.</div>
                 </div>
             );
         }
 
         return (
-            <div className="expressionEditor__result">
+            <div className="expressionEditor__result section">
                 {error}
                 {tmpl}
             </div>

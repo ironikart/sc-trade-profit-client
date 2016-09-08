@@ -1,0 +1,45 @@
+$base-font-scale: 1;  // The font scale multiplier (e.g. 2 = 32px/2em/2rem)
+$base-font-pixel: 16; // Used for font size calculations & conversions
+
+$bg-dark: #08080f !default;
+$bg-foreground: lighten($bg-dark, 7%);
+
+$border-light: #286e80 !default;
+$border-dark: #0d1f2c !default;
+
+$feature-light: #09daff !default;
+
+$heading-default: #efefef !default;
+$text-default: #6abbcf !default;
+$input-text-colour: #efefef;
+
+// arrow indicator
+$select-arrow-color:               $feature-light !default;
+$select-arrow-color-hover:         lighten($feature-light, 15%) !default;
+$select-arrow-width:               5px !default;
+
+$tab-colour: #eb6e34;
+$tab-colour-highlight: saturate(lighten($tab-colour, 15%), 20%);
+
+$success: #35cb35 !default;
+$alert: #cb3541 !default;
+
+// Selection highlighting
+$content-selection-highlight: #b3d4fc;
+
+%input-styles {
+    padding: .6rem;
+    width: 100%;
+    background: $bg-dark;
+    color: darken($input-text-colour, 15%);
+    border: 1px solid $border-light;
+    border-radius: 0;
+    min-height: 1em;
+
+    &:focus {
+        color: $input-text-colour;
+        border: 1px solid $feature-light;
+        animation: text-input-highlight .3s;
+        -webkit-animation: text-input-highlight .3s;
+    }
+}

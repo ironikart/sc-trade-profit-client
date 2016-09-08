@@ -6,4 +6,9 @@ gulp.task('copyHTML', function() {
         .pipe(gulp.dest('build'));
 });
 
-gulp.task('copy', ['copyHTML']);
+gulp.task('copyImages', function() {
+    return gulp.src('src/styles/images/*.*')
+        .pipe(gulp.dest('build/images'));
+});
+
+gulp.task('copy', ['copyHTML', 'copyImages']);

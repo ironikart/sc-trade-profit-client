@@ -54,7 +54,7 @@ class ExpressionItem extends React.Component {
         if (this.props.lastIndex !== this.props.index) {
             moveDownButton = (
                 <button
-                    className="expressionEditor__item-button fi-arrow-down"
+                    className="icon-button fi-arrow-down"
                     aria-label="Move Down"
                     onClick={this.props.moveExpressionDown}>
                 </button>
@@ -65,7 +65,7 @@ class ExpressionItem extends React.Component {
         if (this.props.index !== 0) {
             moveUpButton = (
                 <button
-                    className="expressionEditor__item-button fi-arrow-up"
+                    className="icon-button fi-arrow-up"
                     aria-label="Move Up"
                     onClick={this.props.moveExpressionUp}>
                 </button>
@@ -77,13 +77,14 @@ class ExpressionItem extends React.Component {
         if (symbol !== 'total') {
             removeButton = (
                 <button
-                    className="expressionEditor__item-button fi-x warning"
+                    className="icon-button fi-x alert"
                     aria-label="Remove"
                     onClick={this.props.removeExpression}>
                 </button>
             );
             symbolField = (
                 <ExpressionItemTextField
+                    type="text"
                     labelledBy="symbolName"
                     field={nameField}
                     handleChange={this.handleSymbolChange.bind(this)}
@@ -94,40 +95,37 @@ class ExpressionItem extends React.Component {
         let description = this.props.expr.description.join('\n');
 
         return (
-            <div key={this.props.index} className="expressionEditor__item row">
-                <div className="col u-1of6">
-                    <div className="box">
-                        {symbolField}
-                    </div>
-                </div>
-                <div className="col col-grow">
-                    <div className="box">
-                        <ExpressionItemTextField
-                            labelledBy="expressionName"
-                            field={exprField}
-                            handleChange={this.handleExprChange.bind(this)}
-                            handleError={function() {}} />
+            <tr key={this.props.index} className="expressionEditor__item">
+                <td>
+                    {symbolField}
+                </td>
+                <td>
+                    <ExpressionItemTextField
+                        type="text"
+                        labelledBy="expressionName"
+                        field={exprField}
+                        handleChange={this.handleExprChange.bind(this)}
+                        handleError={function() {}} />
 
-                        <div className="expressionEditor__item-description">
-                            <textarea
-                                rows="4"
-                                cols="50"
-                                value={description}
-                                ref={(elem) => this._description = elem}
-                                onChange={this.handleDescriptionChange.bind(this)}>
-                            </textarea>
-                        </div>
+                    <div className="expressionEditor__item-description">
+                        <label htmlFor={'expressionEditor__item-description'+this.props.index}>Description</label>
+                        <textarea
+                            id={'expressionEditor__item-description'+this.props.index}
+                            rows="4"
+                            cols="50"
+                            value={description}
+                            ref={(elem) => this._description = elem}
+                            onChange={this.handleDescriptionChange.bind(this)}>
+                        </textarea>
                     </div>
-                </div>
+                </td>
 
-                <div className="col u-1of6">
-                    <div className="box">
-                        {removeButton}
-                        {moveUpButton}
-                        {moveDownButton}
-                    </div>
-                </div>
-            </div>
+                <td>
+                    {removeButton}
+                    {moveUpButton}
+                    {moveDownButton}
+                </td>
+            </tr>
         );
     }
 }

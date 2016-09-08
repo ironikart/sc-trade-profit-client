@@ -16,7 +16,7 @@ class Crew extends React.Component {
 
     render() {
         return (
-            <div className="manifest__crew">
+            <div className="manifest__crew section">
                 <h3>Crew</h3>
                 <table id="crew" className="data-table">
                     <thead>
@@ -30,14 +30,14 @@ class Crew extends React.Component {
                     {this.props.crew.map((crew, i) => {
                         return (
                             <tr key={i}>
-                                <td width="80%">
+                                <td width="60%">
                                     <input
                                         type="text"
                                         onChange={this.updateCrew.bind(this, 'name', i)}
                                         value={crew.name}
                                     />
                                 </td>
-                                <td>
+                                <td width="20%">
                                     <input
                                         type="text"
                                         onChange={this.updateCrew.bind(this, 'cut', i)}
@@ -45,7 +45,11 @@ class Crew extends React.Component {
                                     />
                                 </td>
                                 <td>
-                                    <button className="alert button" onClick={this.removeCrew.bind(this, i)}>Remove</button>
+                                    <button
+                                        className="icon-button fi-x alert"
+                                        aria-label="Remove"
+                                        onClick={this.removeCrew.bind(this, i)}>
+                                    </button>
                                 </td>
                             </tr>
                         );

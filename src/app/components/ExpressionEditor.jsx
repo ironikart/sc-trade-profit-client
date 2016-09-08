@@ -3,10 +3,13 @@ import ExpressionResult from './ExpressionResult.jsx';
 import ExpressionItem from './ExpressionItem.jsx';
 import ExportExpressionSet from './ExportExpressionSet.jsx';
 import ImportExpressionSet from './ImportExpressionSet.jsx';
-import { importSet, exportSet } from '../util/set';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { storeJSON, clear } from '../util/local_store';
 import Manifest from './Manifest.jsx';
+import Select from 'react-select';
+
+// Disable styles
+Tabs.setUseDefaultStyles(false);
 
 class ExpressionEditor extends React.Component {
     constructor(props) {
@@ -37,8 +40,8 @@ class ExpressionEditor extends React.Component {
         return currentSet;
     }
 
-    handleSetChange(e) {
-        this.props.setCurrent(e.target.selectedIndex);
+    handleSetChange(option) {
+        this.props.setCurrent(option.value);
         this.props.calculate();
     }
 
@@ -113,11 +116,18 @@ class ExpressionEditor extends React.Component {
                     <label htmlFor="changeSet" className="text-right middle">Current Expression Set</label>
                 </div>
                 <div className="col col-grow">
-                    <select onChange={this.handleSetChange.bind(this)} value={currentIndex}>
-                        {sets.map(function(set, i) {
-                            return ( <option key={i} value={i}>{set.label}</option> );
-                        })};
-                    </select>
+                    <Select
+                        name="expression-switcher"
+                        value={currentIndex}
+                        onChange={this.handleSetChange.bind(this)}
+                        options={sets.map((set, i) => {
+                            return {
+                                label: set.label,
+                                value: i
+                            };
+                        })}
+                        clearableValue="false"
+                    />
                 </div>
             </div>
         );
@@ -155,6 +165,7 @@ class ExpressionEditor extends React.Component {
                         <Tab>New</Tab>
                         <Tab>Export</Tab>
                         <Tab>Import</Tab>
+                        <Tab>Delete</Tab>
                     </TabList>
                     <TabPanel>
                         {switcher}
@@ -187,64 +198,62 @@ class ExpressionEditor extends React.Component {
                             })}
                             </ul>
                         </div>
-                        <h2>Expressions</h2>
-                        <div className="expressionEditor__items-headers row">
-                            <strong className="col" id="symbolName">Symbol Name</strong>
-                            <strong className="col" id="expressionName">Expression</strong>
+                        <div className="section">
+                            <h2>Expressions</h2>
+                            <table className="data-table" id="expression-table">
+                                <thead>
+                                    <tr>
+                                        <th>Symbol Name</th>
+                                        <th>Expression</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody className="expressionEditor__items">
+                                    {currentSet.expr.map((expr, i) => {
+                                        return ( 
+                                            <ExpressionItem
+                                            key={i}
+                                            expr={expr}
+                                            updateDescription={props.updateDescription.bind(this, currentIndex, i)}
+                                            updateExpression={props.updateExpression.bind(this, currentIndex, i)}
+                                            removeExpression={props.removeExpression.bind(this, currentIndex, i)}
+                                            moveExpressionUp={props.moveExpression.bind(this, currentIndex, i, 'up')}
+                                            moveExpressionDown={props.moveExpression.bind(this, currentIndex, i, 'down')}
+                                            lastIndex={lastExprIndex} />
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                            <p>
+                                <button
+                                    className="button"
+                                    aria-label="Insert expression"
+                                    onClick={this.addExpression.bind(this, currentSet.expr.index)}>
+                                    Add new expression
+                                </button>
+                            </p>
                         </div>
-                        <div className="expressionEditor__items">
-                            <button
-                                className="fi-plus expressionEditor__item-button"
-                                aria-label="Insert expression (before)"
-                                onClick={this.addExpression.bind(this, 0)}>
-                                Insert
-                            </button>
-                            {currentSet.expr.map((expr, i) => {
-                                return ( 
-                                    <div key={i}>
-                                        <ExpressionItem
-                                        index={i}
-                                        expr={expr}
-                                        updateDescription={props.updateDescription.bind(this, currentIndex, i)}
-                                        updateExpression={props.updateExpression.bind(this, currentIndex, i)}
-                                        removeExpression={props.removeExpression.bind(this, currentIndex, i)}
-                                        moveExpressionUp={props.moveExpression.bind(this, currentIndex, i, 'up')}
-                                        moveExpressionDown={props.moveExpression.bind(this, currentIndex, i, 'down')}
-                                        lastIndex={lastExprIndex} />
-                                        <button
-                                            className="fi-plus expressionEditor__item-button"
-                                            aria-label="Insert expression (after)"
-                                            onClick={this.addExpression.bind(this, i + 1)}>
-                                            Insert
-                                        </button>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                        <p>
-                            <button className="button alert" onClick={props.removeSet.bind(this, currentIndex)}>
-                                <i className="fi-trash"></i>
-                                <span> Remove current set</span>
-                            </button>
-                        </p>
                     </TabPanel>
                     <TabPanel>
-                        <p>Create a new expression set.</p>
-                        <div className="input-group">
-                            <span className="input-group-label">Set Name</span>
-                            <input
-                                className="input-group-field"
-                                type="text"
-                                onKeyUp={this.handleAddSetKeyUp.bind(this)}
-                                placeholder="New set name"
-                                aria-label="New set name"
-                                name="newSetName"
-                                id="newSetName"
-                                ref={(node) => this._newSetName= node}
-                                defaultValue="" />
-                            <div className="input-group-button">
-                                <button className="button success" onClick={this.addSet.bind(this)}>Add</button>
+                        {switcher}
+                        <div className="section">
+                            <h3>Create a new expression set.</h3>
+                            <label htmlFor="newSetName" className="input-group-label">Set Name</label>
+                            <div>
+                                <input
+                                    className="input-group-field"
+                                    type="text"
+                                    onKeyUp={this.handleAddSetKeyUp.bind(this)}
+                                    placeholder="New set name"
+                                    aria-label="New set name"
+                                    name="newSetName"
+                                    id="newSetName"
+                                    ref={(node) => this._newSetName= node}
+                                    defaultValue="" />
                             </div>
+                            <p>
+                                <button className="button success" onClick={this.addSet.bind(this)}>Add</button>
+                            </p>
                         </div>
                     </TabPanel>
                     <TabPanel>
@@ -252,7 +261,19 @@ class ExpressionEditor extends React.Component {
                         <ExportExpressionSet currentSet={currentSet} setError={this.setError.bind(this)} />
                     </TabPanel>
                     <TabPanel>
+                        {switcher}
                         <ImportExpressionSet {...this.props} setError={this.setError.bind(this)} />
+                        }
+                    </TabPanel>
+                    <TabPanel>
+                        <div className="section">
+                            <h3>Delete expression set</h3>
+                            {switcher}
+                            <button className="button alert" onClick={props.removeSet.bind(this, currentIndex)}>
+                                <i className="fi-trash"></i>
+                                <span> Remove this set</span>
+                            </button>
+                        </div>
                     </TabPanel>
                 </Tabs>
             </div>

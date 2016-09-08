@@ -1,6 +1,8 @@
 @import "node_modules/normalize-scss/sass/normalize/_import-now.scss";
-@import "node_modules/react-select/scss/default.scss";
-@import "./mixins.scss";
+
+@import "./imports/variables.scss";
+@import "./imports/mixins.scss";
+@import "./imports/animations.scss";
 
 *, *:before, *:after {
     box-sizing: inherit;
@@ -15,13 +17,16 @@ body {
     height: 100%;
 }
 body {
-    font-family: 'Abel';
-    font-size: 1em;
+    font-family: 'Electrolize', sans-serif;
+    font-size: $base-font-scale + em;
     overflow-y: scroll;
-    line-height: 1.4;
+    line-height: 1.6;
     padding: 0;
     margin: 0;
-    color: #222;
+    background: $bg-dark url('images/bg.jpg') no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    color: $text-default;
 }
 
 img {
@@ -47,44 +52,128 @@ textarea {
 
 // --- App Styles --- //
 
-select,
 textarea,
 input[type="number"],
 input[type="text"] {
-    padding: .6em;
-    width: 100%;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 0;
-    min-height: 1em;
+    outline: none;
+    @extend %input-styles;
 }
 
-body {
-    background: #333;
-    padding: 0;
-    margin: 0;
+a {
+    &,
+    &:visited,
+    &:active {
+        color: $feature-light;
+    }
 }
 
 [readonly] {
-    background: #eff0f1;
+    background: $bg-foreground;
+}
+
+.main-wrapper {
+    @include bg-grid($bg-colour: transparent, $thick-colour: $border-dark, $thin-colour: darken($border-dark, 5%));
+}
+
+.intro {
+    h1 {
+        text-transform: uppercase;
+        @include font-size(1.4);
+        color: #efefef;
+        margin: 0;
+        margin-bottom: .4em;
+    }
+
+    .version,
+    .links {
+        font-family: 'Courier', sans-serif;
+        @include font-size(.8);
+        margin: .4em 0;
+    }
+
+    .logo {
+        min-width: 80px;
+    }
 }
 
 .main {
-    h1, h2, h3, h4, label {
-        font-family: 'Courier';
+    // h1, h2, h3, h4, label {
+    //     font-family: 'Courier';
+    // }
+
+    h3 {
+        width: 100%;
+        text-shadow: 0 0 30px rgba($feature-light,1);
+        border-top: 1px solid $feature-light;
+        margin: 1rem 0;
+        padding-top: 1rem;
+        position: relative;
+        text-indent: 1rem;
+
+        &:before {
+            content: '';
+            width: 100px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: block;
+            background-color: $feature-light;
+            height: 2px;
+        }
     }
 
-    background: #efefef;
+    border-top: 1px solid $border-light;
+    border-right: 1px solid $border-dark;
+    border-bottom: 1px solid $border-light;
+    border-left: 1px solid $border-dark;
     max-width: 60em;
-    margin: 0 auto;
-    padding: 1em;
+    margin: 1rem auto;
+    padding: 1rem;
+    position: relative;
+
+    // &:before {
+    //     width: 6px;
+    //     height: 6px;
+    //     display: block;
+    //     position: absolute;
+    //     top: -3px;
+    //     left: -3px;
+    //     background: $feature-light;
+    //     content: '';
+
+    //     @include rotate(45);
+    // }
+
+    &:after,
+    &:before {
+        width: 100%;
+        height: 8px;
+        display: block;
+        position: absolute;
+        top: -4px;
+        left: 0;
+
+        content: '';
+        border: 4px solid transparent;
+        border-right: 4px solid $feature-light;
+        border-left: 4px solid $feature-light;
+    }
+
+    &:after {
+        top: auto;
+        bottom: -4px;
+    }
 }
 
 .callout {
-    background: #fff;
-    border: 1px solid #222;
-    padding: .5em;
-    margin: .5em;
+    background: rgba($bg-foreground, .8);
+    border: 1px solid $border-light;
+    padding: 1rem;
+    margin: .5rem;
+
+    h1, h2 {
+        margin-top: 0;
+    }
 }
 
 .expressionEditor {
@@ -157,30 +246,93 @@ body {
 }
 
 .button {
-    background: #ccc;
+    @include font-size(.8);
+    background: $bg-dark;
+    border: 1px dashed $border-dark;
+    border-top: 1px solid $border-light;
+    padding: .6rem 1rem;
+    color: $feature-light;
+    cursor: pointer;
+    margin: 0 .4rem;
+
+    text-transform: uppercase;
+
+    border-radius: .4rem;
+
+    @include box-shadow(inset .1rem .1rem .8rem rgba($feature-light, .3));
+    @include transition(box-shadow 200ms ease-in-out);
+
+    &:hover,
+    &:focus {
+        outline: none;
+        @include box-shadow(inset .3rem .1rem .8rem rgba($feature-light, .4));
+
+        &.alert {
+            border-color: $alert;
+            @include box-shadow(inset .3rem .1rem .8rem rgba($alert, .4));
+        }
+    }
+
+    &.success {
+        color: $success;
+    }
+
+    &.alert {
+        color: $alert;
+    }
+}
+
+.icon-button {
+    background: transparent;
+    cursor: pointer;
+    padding: .4rem;
+    color: $text-default;
     border: 0;
-    border-right: 1px solid darken(#ccc, 15%);
-    border-bottom: 1px solid darken(#ccc, 15%);
-    padding: .4em .8em;
+    outline: none;
+
+    @include transition(box-shadow 200ms ease-in-out);
+
+    &.success {
+        color: $success;
+    }
+
+    &.alert {
+        color: $alert;
+    }
+
+    &:hover,
+    &:focus {
+        & {
+            text-shadow: .1rem .1rem 1rem rgba($feature-light, .3);
+        }
+        &.success {
+            text-shadow: .1rem .1rem 1rem rgba($success, .3);
+        }
+        &.alert {
+            text-shadow: .1rem .1rem 1rem rgba($alert, .3);
+        }
+    }
 }
 
 .data-table {
     width: 100%;
-    border: 1px solid;
+    border: 1px solid $border-dark;
     border-collapse: collapse;
     margin: .5em 0;
-    & td {
-        border: 1px solid #222;
+    td {
+        border: 1px solid $border-dark;
     }
 
-    & td, & th {
-        padding: .4em;
+    td, th {
+        padding: .6em;
+        vertical-align: top;
     }
 
-    & th {
-        font-family: 'Courier';
+    th {
+        background-color: rgba($feature-light, .05);
         font-weight: 400;
         text-align: left;
+        color: #efefef;
     }
 }
 
@@ -225,17 +377,90 @@ body {
         content: ' UEC';
         vertical-align: text-top;
         font-size: .8em;
-        color: #000;
     }
 }
 
-.manifest {
-    &__ports,
-    &__ship,
-    &__cargo,
-    &__crew {
-        padding-bottom: 1em;
-        margin-bottom: .5em;
-        border-bottom: 1px solid #222;
+.section {
+    border: 1px dotted $border-dark;
+    border-top-color: $border-light;
+    background: rgba($bg-dark, .8);
+    padding: 1rem;
+    margin-top: 1rem;
+    position: relative;
+
+    &:before,
+    &:after {
+        content: '';
+        font-size: 1.5rem;
+        position: absolute;
+        border: 1px solid $border-light;
+        width: 4px;
+        height: 4px;
+    }
+
+    &:before {
+        top: -2px;
+        left: -2px;
+    }
+
+    &:after {
+        bottom: -2px;
+        right: -2px;
+        }
+}
+
+.footer {
+    font-size: .8rem;
+}
+
+.manifest__route-map {
+    &--item {
+        padding: .6em;
+        position: relative;
+        text-align: center;
+
+        &:before {
+            content: '';
+            top: -6px;
+            border-radius: 50%;
+            width: 12px;
+            height: 12px;
+            position: absolute;
+            background: $tab-colour-highlight;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 90;
+        }
+
+        &:after {
+            content: '';
+            top: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            position: absolute;
+            background: $border-light;
+            z-index: 80;
+        }
+
+        &:first-child:after {
+            width: 50%;
+            left: 50%;
+        }
+
+        &:last-child:after {
+            width: 50%;
+            right: 50%;
+        }
+
+        &:first-child,
+        &:last-child {
+            color: #efefef;
+        }
     }
 }
+
+
+// Bring in react component styles.
+@import "./imports/select.scss";
+@import "./imports/tabs.scss";

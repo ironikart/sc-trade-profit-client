@@ -30,7 +30,7 @@ class Ship extends React.Component {
         });
 
         return (
-            <div className="manifest__ship">
+            <div className="manifest__ship section">
                 <h3>Ship</h3>
                 <div className="row">
                     <div className="col col-grow">

@@ -8,7 +8,7 @@ function addSet(state, action) {
         output: [
             ['total', 'Total Profit']
         ],
-        expr: parse(['total=sell - buy'])
+        expr: parse(['total=(totalSell - totalBuy) + crewCut'])
     });
     clone.currentIndex = clone.sets.length - 1;
     return clone;

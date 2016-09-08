@@ -11,5 +11,6 @@ gulp.task('setWatch', function() {
     global.isWatching = true;
 
     gulp.watch('src/html/*.html', ['copyHTML']).on('change', global.sync.reload);
-    gulp.watch('src/styles/*.scss', ['sass']).on('change', global.sync.reload);
+    gulp.watch('src/styles/images/*.*', ['copyImages']).on('change', global.sync.reload);
+    gulp.watch(['src/styles/**/*.scss', 'src/styles/*.scss'], ['sass']).on('change', global.sync.reload);
 });
