@@ -20,6 +20,7 @@
 	Example System:
 	
 	"314":{
+		"system": 314,
 		"name": "Stanton",
 		"code":"STANTON",
 		"description":"While the UEE still controls the rights to the system overall, the four planets themselves were sold by the government to four megacorporations making them the only privately-owned worlds in the Empire. Though subject to the UEE’s Common Laws and standard penal code, the UEE does not police the region. Instead, private planetary security teams enforce the local law.",
@@ -73,6 +74,7 @@ var callbackResponse = function(response){
 			var id = responseObject.data.systems.resultset[system]['id'];//surrogate key for system
 			//push current system using key
 			systems[id]   = {
+				'system'            : id,
 				'name'              : responseObject.data.systems.resultset[system]['name'],
 				'code'              : responseObject.data.systems.resultset[system]['code'],//name uppercase
 				'description'       : responseObject.data.systems.resultset[system]['description'],
