@@ -11,50 +11,33 @@
 	@Description: Single Source Shortest Path calculation using Dijkstra's algorithm and a replaceable comparator function
 	
 	TODO:
-	- make the comparator function replacable
-	- define sourceVertex using an input argument or POST
 	- find a solution to not all jump points being defined both directions
-	- implement tunnel size restrictions
 */
-var path = require('path');
-var fs   = require('fs');
-var heap = require('heap');
 
-var input = path.resolve(__dirname + '/../data/systems_with_tunnels.json');
-    input = JSON.parse( fs.readFileSync(input) );
-var distances = {};
-
-//return true if the second tunnel is larger than the first
-/*var compareSize = function(tunnel1, tunnel2){
-	if( tunnel1['size'] === 'L' )return false;
-	if( tunnel2['size'] === 'L' )return true;
-	if( tunnel1['size'] === 'M' )return false;
-	if( tunnel2['size'] === 'M' )return true;
-	return false;
-};*/
-
-var compare = function(vertex1, vertex2){
-	if( distances[vertex2['system']] < distances[vertex1['system']] )return 1;
-	else return -1;
+//check if using the visited vertex helps, depending on what weight we're optimizing
+//Pure Function
+function tryNewEdge(weightVisiting, weightTarget, weightType){
+	var weightParent = weightVisiting['parent'];
+	if(weightType === 'jumps') return (1 + weightVisiting['distance'] < weightTarget['distance']);
+	if(weightType === 'danger')return (weightParent['danger'] + weightVisiting['danger'] < weightTarget['danger']);
 }
 
-//return true if the second tunnel is safer than the first
-/*var compareDanger = function(tunnel1, tunnel2){
-	if( tunnel2['exit_system_danger'] < tunnel1['exit_system_danger'] )return true;
-	return false;
-};*/
-
-function relaxVertex(vertexHeap, distances, visitNodes, vertexList){
+function relaxVertex(vertexHeap, weights, visitNodes, vertexList, weightType, minSize){
 	var visiting = vertexHeap.pop();
 	//inspect each outgoing each at the node we're visiting
 	for(edge in visiting['tunnels']){
+		if( minSize === 'medium' && visiting['tunnels'][edge]['size'] === 'S' )continue;
+		if( minSize === 'large'  && visiting['tunnels'][edge]['size'] === 'S' )continue;
+		if( minSize === 'large'  && visiting['tunnels'][edge]['size'] === 'M' )continue;
+	
 		var targetSystem = visiting['tunnels'][edge]['exitSystem'];
 		
 		//if we can get to target system faster thru the visiting one, then do so
-		//console.log(distances[visiting['system']]);
-		if( 1 + distances[visiting['system']]['distance'] < distances[targetSystem]['distance'] ){
-			distances[targetSystem]['distance'] = 1 + distances[visiting['system']]['distance'];
-			distances[targetSystem]['parent'] = visiting['system'];
+		if( tryNewEdge(weights[visiting['system']], weights[targetSystem], weightType) ){
+			weights[targetSystem]['distance'] = 1 + weights[visiting['system']]['distance'];
+			weights[targetSystem]['parent'] = visiting['system'];
+			weights[targetSystem]['danger'] = visiting['danger'] + visiting['tunnels'][edge]['exit_system_danger'];
+			weights[targetSystem]['size']   = visiting['tunnels'][edge]['size'];
 		}
 		
 		//if the target system isn't on our list of nodes to visit (or have visited) then we need add to push it on the heap
@@ -69,50 +52,79 @@ function relaxVertex(vertexHeap, distances, visitNodes, vertexList){
  * @Input: all vertex data, source, and comparator function to select shortest edge
  * @Output: a complete path from source to each destination and the corresponding distance
  */
-function sssp(vertexList, sourceVertex, comparator, distances){
-	var vertexHeap = new heap(comparator);
+function sssp(sourceVertexName, weightType, minSize){
+	var path = require('path');
+	var fs   = require('fs');
+	var heap = require('heap');
+
+	var input = path.resolve(__dirname + '/../data/systems_with_tunnels.json');
+	    input = JSON.parse( fs.readFileSync(input) );
+	
+	//create an array of vertices for us to heapify
+	var vertexList = [];
+	for(vertex in input){
+		var newVertex = {
+			system : input[vertex]['system'],
+			danger : input[vertex]['aggregated_danger'],
+			tunnels: input[vertex]['tunnels']
+		};
+		vertexList[newVertex.system] = newVertex;
+	}
+	delete(input);
+
+	//return true if using the intermediary vertex yields a lower weight path
+	//Pure Functions
+	if(weightType === 'jumps')var compare = function(vertex1, vertex2){
+		if( weights[vertex2['system']]['distance'] < weights[vertex1['system']]['distance'] )return 1;
+		else return -1;
+	}
+	if(weightType === 'danger')var compare = function(vertex1, vertex2){
+		if( weights[vertex2['system']]['danger'] < weights[vertex1['system']]['danger'] )return 1;
+		else return -1;
+	};
+	
+	var weights = {};
+	var vertexHeap = new heap(compare);
 	var visitNodes = [];
 	
-	//init all path distances to infinity
+	//init all path weights to infinity
 	for(vertex in vertexList){
 		var edge = {
 			parent: "",
 			exit: vertexList[vertex]['system'],
-			distance: Number.MAX_VALUE
+			//distance: Number.MAX_VALUE,
+			//danger: Number.MAX_VALUE
+			distance: 500,
+			danger: 500
 		};
-		distances[edge.exit] = edge;
+		weights[edge.exit] = edge;
 	}
 	
-	//init starting distances
-	for(edge in vertexList[sourceVertex]['tunnels']){
-		var targetSystem = vertexList[sourceVertex]['tunnels'][edge]['exitSystem'];
-		vertexHeap.push(vertexList[targetSystem]);
-		visitNodes.push(targetSystem);
-		distances[targetSystem]['distance'] = 1;
-		distances[targetSystem]['parent'] = sourceVertex;
-	}
-	
-	//we can immediatly remove sourceVertex from the list because distance to self === 0
-	delete vertexList[sourceVertex];
+	//init starting weights
+	vertexHeap.push(vertexList[sourceVertexName]);
+	visitNodes.push(sourceVertexName);
+	weights[sourceVertexName]['distance'] = 0;
+	weights[sourceVertexName]['parent']   = sourceVertexName;
+	weights[sourceVertexName]['danger']   = vertexList[sourceVertexName]['danger'];
+	weights[sourceVertexName]['size']     = 'N';
 	
 	//relax all edges
-	while( !vertexHeap.empty() )relaxVertex(vertexHeap, distances, visitNodes, vertexList);
-	return distances;
+	while( !vertexHeap.empty() )relaxVertex(vertexHeap, weights, visitNodes, vertexList, weightType, minSize);
+	return weights;
 }
 
-//create an array of vertices for us to heapify
-var vertexList = [];
-for(vertex in input){
-	var newVertex = {
-		system : input[vertex]['system'],
-		danger : input[vertex]['aggregated_danger'],
-		tunnels: input[vertex]['tunnels']
-	};
-	vertexList[newVertex.system] = newVertex;
-}
-
-var sourceVertex = input['315']['system'];
-var shortestPaths = sssp(vertexList, sourceVertex, compare, distances);
-
-console.log(shortestPaths);
+/* allowed tunnel weights: jumps, danger
+ * allowed tunnel sizes: small, medium, large
+ */
+//defaults:
+var sourceVertexName = '314';
+var weightType = 'jumps';
+var minSize = 'small';
+if(typeof process.argv[2] !== 'undefined')weightType = process.argv[2];
+if(typeof process.argv[3] !== 'undefined')minSize    = process.argv[3];
+if(typeof process.argv[4] !== 'undefined')sourceVertexName = process.argv[4];
+console.log( sssp(sourceVertexName, weightType, minSize) );
+console.log('sourceVertexName = ' + sourceVertexName);
+console.log('weightType = ' + weightType);
+console.log('minSize = ' + minSize);
 
