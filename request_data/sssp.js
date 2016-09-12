@@ -54,7 +54,7 @@ function sssp(sourceVertexName, weightType, minSize){
 	var fs   = require('fs');
 	var heap = require('heap');
 
-	var input = path.resolve(__dirname + '/../data/systems_with_tunnels.json');
+	var input = path.resolve(__dirname + '/../data/vertices.json');
 	    input = JSON.parse( fs.readFileSync(input) );
 	
 	//create an array of vertices for us to heapify

@@ -34,16 +34,10 @@
 	"314":{
 		"system": 314,
 		"name": "Stanton",
-		"code":"STANTON",
 		"description":"While the UEE still controls the rights to the system overall, the four planets themselves were sold by the government to four megacorporations making them the only privately-owned worlds in the Empire. Though subject to the UEE’s Common Laws and standard penal code, the UEE does not police the region. Instead, private planetary security teams enforce the local law.",
 		"affiliation":"UEE",
 		"danger":10,
 		"thumbnail":"https://robertsspaceindustries.com/media/anxi4tr0ija81r/source/JStanton-Arccorp.jpg",
-		"tunnels":{
-			"318": { "size":"M", "exit":"318", "parent":"314", "xDanger":0 },
-			"319": { "size":"L", "exit":"319", "parent":"314", "xDanger":0 },
-			"316": { "size":"L", "exit":"316", "parent":"314", "xDanger":0 }
-		}
 	}
 	
 */
@@ -81,22 +75,27 @@ var callbackResponse = function(response){
 		
 		//generate list of systems with basic system data
 		var systems = {};
+		var details = {};
 		for(var system in responseObject.data.systems.resultset){
 			var id = responseObject.data.systems.resultset[system]['id'];//surrogate key for system
 			//push current system using key
-			systems[id]   = {
+			systems[id] = {
 				'system'            : id,
 				'name'              : responseObject.data.systems.resultset[system]['name'],
-				//'code'              : responseObject.data.systems.resultset[system]['code'],//name uppercase
-				//'description'       : responseObject.data.systems.resultset[system]['description'],
-				//'affiliation'       : responseObject.data.systems.resultset[system]['affiliation'][0]['name'],//owning faction
 				'danger' : parseFloat( responseObject.data.systems.resultset[system]['aggregated_danger'] ),
-				//'thumbnail'         : path.resolve(__dirname, '../data/defaultSystemThumbnail.png'),//thumbnail for planet
 				'tunnels'           : {}
 			};
-			//if( typeof responseObject.data.systems.resultset[system]['thumbnail'] !== 'undefined' ){
-			//	systems[id]['thumbnail'] = responseObject.data.systems.resultset[system]['thumbnail']['source'];
-			//}
+			details[id] = {
+				'system'            : id,
+				'name'              : responseObject.data.systems.resultset[system]['name'],
+				'description'       : responseObject.data.systems.resultset[system]['description'],
+				'affiliation'       : responseObject.data.systems.resultset[system]['affiliation'][0]['name'],//owning faction
+				'thumbnail'         : path.resolve(__dirname, '../data/defaultSystemThumbnail.png')
+			}
+			//if a custom image exists, override default thumbnail
+			if( typeof responseObject.data.systems.resultset[system]['thumbnail'] !== 'undefined' ){
+				details[id]['thumbnail'] = responseObject.data.systems.resultset[system]['thumbnail']['source'];
+			}
 		}
 		
 		//add jump tunnels
@@ -123,7 +122,8 @@ var callbackResponse = function(response){
 			systems[exit]['tunnels'][entrySystem] = backTunnel;
 		}
 		
-		fs.writeFileSync( path.resolve(__dirname, '../data/systems_with_tunnels.json'), JSON.stringify(systems) );
+		fs.writeFileSync( path.resolve(__dirname, '../data/vertices.json'), JSON.stringify(systems) );
+		fs.writeFileSync( path.resolve(__dirname, '../data/details.json'), JSON.stringify(details) );
 	};
 	
 	//POST returns data in pieces (chunks), so we concatenate them before continuing
