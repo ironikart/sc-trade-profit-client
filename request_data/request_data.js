@@ -22,15 +22,27 @@
 	"314":{
 		"system": 314,
 		"name": "Stanton",
+		"danger":10,
+		"tunnels":{
+			"318": { "size":"M", "exit":"318", "parent":"314", "xDanger":0 },
+			"319": { "size":"L", "exit":"319", "parent":"314", "xDanger":0 },
+			"316": { "size":"L", "exit":"316", "parent":"314", "xDanger":0 }
+		}
+	}
+	
+	(if uncommenting values)
+	"314":{
+		"system": 314,
+		"name": "Stanton",
 		"code":"STANTON",
 		"description":"While the UEE still controls the rights to the system overall, the four planets themselves were sold by the government to four megacorporations making them the only privately-owned worlds in the Empire. Though subject to the UEE’s Common Laws and standard penal code, the UEE does not police the region. Instead, private planetary security teams enforce the local law.",
 		"affiliation":"UEE",
-		"aggregated_danger":10,
+		"danger":10,
 		"thumbnail":"https://robertsspaceindustries.com/media/anxi4tr0ija81r/source/JStanton-Arccorp.jpg",
 		"tunnels":{
-			"318": { "size":"M", "exitSystem":"318", "parent":"314", "exit_system_danger":0 },
-			"319": { "size":"L", "exitSystem":"319", "parent":"314", "exit_system_danger":0 },
-			"316": { "size":"L", "exitSystem":"316", "parent":"314", "exit_system_danger":0 }
+			"318": { "size":"M", "exit":"318", "parent":"314", "xDanger":0 },
+			"319": { "size":"L", "exit":"319", "parent":"314", "xDanger":0 },
+			"316": { "size":"L", "exit":"316", "parent":"314", "xDanger":0 }
 		}
 	}
 	
@@ -75,40 +87,40 @@ var callbackResponse = function(response){
 			systems[id]   = {
 				'system'            : id,
 				'name'              : responseObject.data.systems.resultset[system]['name'],
-				'code'              : responseObject.data.systems.resultset[system]['code'],//name uppercase
-				'description'       : responseObject.data.systems.resultset[system]['description'],
-				'affiliation'       : responseObject.data.systems.resultset[system]['affiliation'][0]['name'],//owning faction
-				'aggregated_danger' : parseFloat( responseObject.data.systems.resultset[system]['aggregated_danger'] ),
-				'thumbnail'         : path.resolve(__dirname, '../data/defaultSystemThumbnail.png'),//thumbnail for planet
+				//'code'              : responseObject.data.systems.resultset[system]['code'],//name uppercase
+				//'description'       : responseObject.data.systems.resultset[system]['description'],
+				//'affiliation'       : responseObject.data.systems.resultset[system]['affiliation'][0]['name'],//owning faction
+				'danger' : parseFloat( responseObject.data.systems.resultset[system]['aggregated_danger'] ),
+				//'thumbnail'         : path.resolve(__dirname, '../data/defaultSystemThumbnail.png'),//thumbnail for planet
 				'tunnels'           : {}
 			};
-			if( typeof responseObject.data.systems.resultset[system]['thumbnail'] !== 'undefined' ){
-				systems[id]['thumbnail'] = responseObject.data.systems.resultset[system]['thumbnail']['source'];
-			}
+			//if( typeof responseObject.data.systems.resultset[system]['thumbnail'] !== 'undefined' ){
+			//	systems[id]['thumbnail'] = responseObject.data.systems.resultset[system]['thumbnail']['source'];
+			//}
 		}
 		
 		//add jump tunnels
 		for(var tunnel in responseObject.data.tunnels.resultset){
 			var entrySystem = responseObject.data.tunnels.resultset[tunnel]['entry']['star_system_id'];
-			var exitSystem  = responseObject.data.tunnels.resultset[tunnel]['exit']['star_system_id'];
+			var exit  = responseObject.data.tunnels.resultset[tunnel]['exit']['star_system_id'];
 			
 			//add forward direction tunnel
 			var newTunnel = {
 				size:       responseObject.data.tunnels.resultset[tunnel].size,
-				exitSystem: exitSystem,
+				exit: exit,
 				parent: entrySystem,
-				exit_system_danger: systems[exitSystem]['aggregated_danger']
+				xDanger: systems[exit]['danger']
 			};
-			systems[entrySystem]['tunnels'][exitSystem] = newTunnel;
+			systems[entrySystem]['tunnels'][exit] = newTunnel;
 			
 			//add opposite tunnel, as current RSI uses undirected edges, whereas ours are directional
 			var backTunnel = {
 				size:       responseObject.data.tunnels.resultset[tunnel].size,
-				exitSystem: entrySystem,
-				parent: exitSystem,
-				exit_system_danger: systems[entrySystem]['aggregated_danger']
+				exit: entrySystem,
+				parent: exit,
+				xDanger: systems[entrySystem]['danger']
 			}
-			systems[exitSystem]['tunnels'][entrySystem] = backTunnel;
+			systems[exit]['tunnels'][entrySystem] = backTunnel;
 		}
 		
 		fs.writeFileSync( path.resolve(__dirname, '../data/systems_with_tunnels.json'), JSON.stringify(systems) );

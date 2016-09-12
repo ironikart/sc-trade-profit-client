@@ -11,7 +11,7 @@
 	@Description: Single Source Shortest Path calculation using Dijkstra's algorithm and a replaceable comparator function
 */
 
-//check if using the visited vertex helps, depending on what weight we're optimizing
+//decide if the visiting vertex helps, depending on what weight we're optimizing
 //Pure Function
 function tryNewEdge(visitingVertex, targetVertex, weightType){
 	if(weightType === 'jumps') return (1 + visitingVertex['weightDistance'] < targetVertex['weightDistance']);
@@ -27,13 +27,13 @@ function relaxVertex(vertexHeap, visitNodes, vertexList, weightType, minSize){
 		if( minSize === 'large'  && visitingVertex['tunnels'][edge]['size'] === 'S' )continue;
 		if( minSize === 'large'  && visitingVertex['tunnels'][edge]['size'] === 'M' )continue;
 	
-		var targetSystemName = visitingVertex['tunnels'][edge]['exitSystem'];
+		var targetSystemName = visitingVertex['tunnels'][edge]['exit'];
 		
 		//if we can get to target system faster thru the visiting one, then do so
 		if( tryNewEdge(visitingVertex, vertexList[targetSystemName], weightType) ){
 			vertexList[targetSystemName]['weightDistance'] = 1 + visitingVertex['weightDistance'];
 			vertexList[targetSystemName]['parent']   = visitingName;
-			vertexList[targetSystemName]['weightDanger'] = visitingVertex['weightDanger'] + visitingVertex['tunnels'][edge]['exit_system_danger'];
+			vertexList[targetSystemName]['weightDanger'] = visitingVertex['weightDanger'] + visitingVertex['tunnels'][edge]['xDanger'];
 			vertexList[targetSystemName]['size'] = visitingVertex['tunnels'][edge]['size'];
 		}
 		
@@ -63,7 +63,7 @@ function sssp(sourceVertexName, weightType, minSize){
 		//init all vertices and their path weights
 		var newVertex = {
 			system : input[vertex]['system'],
-			danger : input[vertex]['aggregated_danger'],
+			danger : input[vertex]['danger'],
 			tunnels: input[vertex]['tunnels'],
 			parent : sourceVertexName,
 			weightDistance: Number.MAX_VALUE,
