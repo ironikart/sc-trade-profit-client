@@ -23,9 +23,9 @@ function relaxVertex(vertexHeap, visitNodes, vertexList, weightType, minSize){
 	var visitingName   = visitingVertex['system'];
 	//inspect each outgoing each at the node we're visiting
 	for(edge in visitingVertex['tunnels']){
-		if( minSize === 'medium' && visiting['tunnels'][edge]['size'] === 'S' )continue;
-		if( minSize === 'large'  && visiting['tunnels'][edge]['size'] === 'S' )continue;
-		if( minSize === 'large'  && visiting['tunnels'][edge]['size'] === 'M' )continue;
+		if( minSize === 'medium' && visitingVertex['tunnels'][edge]['size'] === 'S' )continue;
+		if( minSize === 'large'  && visitingVertex['tunnels'][edge]['size'] === 'S' )continue;
+		if( minSize === 'large'  && visitingVertex['tunnels'][edge]['size'] === 'M' )continue;
 	
 		var targetSystemName = visitingVertex['tunnels'][edge]['exitSystem'];
 		
@@ -121,7 +121,7 @@ for(result in resultMatrix){
 	console.log('system: ' + system + ' distance: ' + distance + ' danger: ' + danger);
 }
 
-console.log('sourceVertexName = ' + sourceVertexName);
 console.log('weightType = ' + weightType);
 console.log('minSize = ' + minSize);
+console.log('sourceVertexName = ' + sourceVertexName);
 
