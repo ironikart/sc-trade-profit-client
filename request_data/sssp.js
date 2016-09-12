@@ -9,41 +9,38 @@
 	@license-end
 	
 	@Description: Single Source Shortest Path calculation using Dijkstra's algorithm and a replaceable comparator function
-	
-	TODO:
-	- find a solution to not all jump points being defined both directions
 */
 
 //check if using the visited vertex helps, depending on what weight we're optimizing
 //Pure Function
-function tryNewEdge(weightVisiting, weightTarget, weightType){
-	var weightParent = weightVisiting['parent'];
-	if(weightType === 'jumps') return (1 + weightVisiting['distance'] < weightTarget['distance']);
-	if(weightType === 'danger')return (weightParent['danger'] + weightVisiting['danger'] < weightTarget['danger']);
+function tryNewEdge(visitingVertex, targetVertex, weightType){
+	if(weightType === 'jumps') return (1 + visitingVertex['weightDistance'] < targetVertex['weightDistance']);
+	if(weightType === 'danger')return (targetVertex['danger'] + visitingVertex['weightDanger'] < targetVertext['weightDanger']);
 }
 
-function relaxVertex(vertexHeap, weights, visitNodes, vertexList, weightType, minSize){
-	var visiting = vertexHeap.pop();
+function relaxVertex(vertexHeap, visitNodes, vertexList, weightType, minSize){
+	var visitingVertex = vertexHeap.pop();
+	var visitingName   = visitingVertex['system'];
 	//inspect each outgoing each at the node we're visiting
-	for(edge in visiting['tunnels']){
+	for(edge in visitingVertex['tunnels']){
 		if( minSize === 'medium' && visiting['tunnels'][edge]['size'] === 'S' )continue;
 		if( minSize === 'large'  && visiting['tunnels'][edge]['size'] === 'S' )continue;
 		if( minSize === 'large'  && visiting['tunnels'][edge]['size'] === 'M' )continue;
 	
-		var targetSystem = visiting['tunnels'][edge]['exitSystem'];
+		var targetSystemName = visitingVertex['tunnels'][edge]['exitSystem'];
 		
 		//if we can get to target system faster thru the visiting one, then do so
-		if( tryNewEdge(weights[visiting['system']], weights[targetSystem], weightType) ){
-			weights[targetSystem]['distance'] = 1 + weights[visiting['system']]['distance'];
-			weights[targetSystem]['parent'] = visiting['system'];
-			weights[targetSystem]['danger'] = visiting['danger'] + visiting['tunnels'][edge]['exit_system_danger'];
-			weights[targetSystem]['size']   = visiting['tunnels'][edge]['size'];
+		if( tryNewEdge(visitingVertex, vertexList[targetSystemName], weightType) ){
+			vertexList[targetSystemName]['weightDistance'] = 1 + visitingVertex['weightDistance'];
+			vertexList[targetSystemName]['parent']   = visitingName;
+			vertexList[targetSystemName]['weightDanger'] = visitingVertex['weightDanger'] + visitingVertex['tunnels'][edge]['exit_system_danger'];
+			vertexList[targetSystemName]['size'] = visitingVertex['tunnels'][edge]['size'];
 		}
 		
 		//if the target system isn't on our list of nodes to visit (or have visited) then we need add to push it on the heap
-		if( typeof visitNodes[targetSystem] === 'undefined' ){
-			visitNodes.push(targetSystem);
-			vertexHeap.push(vertexList[targetSystem]);
+		if( typeof visitNodes[targetSystemName] === 'undefined' ){
+			visitNodes[targetSystemName] = true;
+			vertexHeap.push(vertexList[targetSystemName]);
 		}
 	}
 }
@@ -63,54 +60,46 @@ function sssp(sourceVertexName, weightType, minSize){
 	//create an array of vertices for us to heapify
 	var vertexList = [];
 	for(vertex in input){
+		//init all vertices and their path weights
 		var newVertex = {
 			system : input[vertex]['system'],
 			danger : input[vertex]['aggregated_danger'],
-			tunnels: input[vertex]['tunnels']
+			tunnels: input[vertex]['tunnels'],
+			parent : sourceVertexName,
+			weightDistance: Number.MAX_VALUE,
+			weightDanger  : Number.MAX_VALUE
 		};
 		vertexList[newVertex.system] = newVertex;
 	}
-	delete(input);
+	//delete(input);
 
-	//return true if using the intermediary vertex yields a lower weight path
+	//check if an intermediary path improves total weight
 	//Pure Functions
 	if(weightType === 'jumps')var compare = function(vertex1, vertex2){
-		if( weights[vertex2['system']]['distance'] < weights[vertex1['system']]['distance'] )return 1;
-		else return -1;
+		if( vertex2['weightDistance'] < vertex1['weightDistance'] )return  1;
+		if( vertex2['weightDistance'] > vertex1['weightDistance'] )return -1;
+		else return 0;
 	}
 	if(weightType === 'danger')var compare = function(vertex1, vertex2){
-		if( weights[vertex2['system']]['danger'] < weights[vertex1['system']]['danger'] )return 1;
-		else return -1;
+		if( vertex2['weightDanger'] < vertex1['weightDanger'] )return  1;
+		if( vertex2['weightDanger'] > vertex1['weightDanger'] )return -1;
+		else return 0;
 	};
 	
-	var weights = {};
 	var vertexHeap = new heap(compare);
 	var visitNodes = [];
-	
-	//init all path weights to infinity
-	for(vertex in vertexList){
-		var edge = {
-			parent: "",
-			exit: vertexList[vertex]['system'],
-			//distance: Number.MAX_VALUE,
-			//danger: Number.MAX_VALUE
-			distance: 500,
-			danger: 500
-		};
-		weights[edge.exit] = edge;
-	}
 	
 	//init starting weights
 	vertexHeap.push(vertexList[sourceVertexName]);
 	visitNodes.push(sourceVertexName);
-	weights[sourceVertexName]['distance'] = 0;
-	weights[sourceVertexName]['parent']   = sourceVertexName;
-	weights[sourceVertexName]['danger']   = vertexList[sourceVertexName]['danger'];
-	weights[sourceVertexName]['size']     = 'N';
+	vertexList[sourceVertexName]['weightDistance'] = 0;
+	vertexList[sourceVertexName]['weightParent']   = sourceVertexName;
+	vertexList[sourceVertexName]['weightDanger']   = vertexList[sourceVertexName]['danger'];
+	vertexList[sourceVertexName]['size']           = 'N';
 	
 	//relax all edges
-	while( !vertexHeap.empty() )relaxVertex(vertexHeap, weights, visitNodes, vertexList, weightType, minSize);
-	return weights;
+	while( !vertexHeap.empty() )relaxVertex(vertexHeap, visitNodes, vertexList, weightType, minSize);
+	return vertexList;
 }
 
 /* allowed tunnel weights: jumps, danger
@@ -123,7 +112,15 @@ var minSize = 'small';
 if(typeof process.argv[2] !== 'undefined')weightType = process.argv[2];
 if(typeof process.argv[3] !== 'undefined')minSize    = process.argv[3];
 if(typeof process.argv[4] !== 'undefined')sourceVertexName = process.argv[4];
-console.log( sssp(sourceVertexName, weightType, minSize) );
+
+var resultMatrix = sssp(sourceVertexName, weightType, minSize);
+for(result in resultMatrix){
+	var system   = resultMatrix[result].system;
+	var distance = resultMatrix[result].weightDistance.toString();
+	var danger   = resultMatrix[result].weightDanger.toString();
+	console.log('system: ' + system + ' distance: ' + distance + ' danger: ' + danger);
+}
+
 console.log('sourceVertexName = ' + sourceVertexName);
 console.log('weightType = ' + weightType);
 console.log('minSize = ' + minSize);

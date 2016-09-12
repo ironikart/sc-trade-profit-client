@@ -27,11 +27,11 @@
 		"affiliation":"UEE",
 		"aggregated_danger":10,
 		"thumbnail":"https://robertsspaceindustries.com/media/anxi4tr0ija81r/source/JStanton-Arccorp.jpg",
-		"tunnels":[
-			{ "size":"M", "exitSystem":"318", "exit_system_danger":0 },
-			{ "size":"L", "exitSystem":"319", "exit_system_danger":0 },
-			{ "size":"L", "exitSystem":"316", "exit_system_danger":0 }
-		]
+		"tunnels":{
+			"318": { "size":"M", "exitSystem":"318", "parent":"314", "exit_system_danger":0 },
+			"319": { "size":"L", "exitSystem":"319", "parent":"314", "exit_system_danger":0 },
+			"316": { "size":"L", "exitSystem":"316", "parent":"314", "exit_system_danger":0 }
+		}
 	}
 	
 */
@@ -65,7 +65,6 @@ var callbackResponse = function(response){
 	var jump_tunnel_data = "";
 	
 	var filterJumpData = function(){
-		var edges = {jump_tunnels:[]};
 		responseObject = JSON.parse(jump_tunnel_data);
 		
 		//generate list of systems with basic system data
@@ -81,23 +80,35 @@ var callbackResponse = function(response){
 				'affiliation'       : responseObject.data.systems.resultset[system]['affiliation'][0]['name'],//owning faction
 				'aggregated_danger' : parseFloat( responseObject.data.systems.resultset[system]['aggregated_danger'] ),
 				'thumbnail'         : path.resolve(__dirname, '../data/defaultSystemThumbnail.png'),//thumbnail for planet
-				'tunnels'           : []
+				'tunnels'           : {}
 			};
 			if( typeof responseObject.data.systems.resultset[system]['thumbnail'] !== 'undefined' ){
 				systems[id]['thumbnail'] = responseObject.data.systems.resultset[system]['thumbnail']['source'];
 			}
 		}
 		
-		//add connecting jump points to each system
+		//add jump tunnels
 		for(var tunnel in responseObject.data.tunnels.resultset){
 			var entrySystem = responseObject.data.tunnels.resultset[tunnel]['entry']['star_system_id'];
 			var exitSystem  = responseObject.data.tunnels.resultset[tunnel]['exit']['star_system_id'];
+			
+			//add forward direction tunnel
 			var newTunnel = {
 				size:       responseObject.data.tunnels.resultset[tunnel].size,
 				exitSystem: exitSystem,
+				parent: entrySystem,
 				exit_system_danger: systems[exitSystem]['aggregated_danger']
 			};
-			systems[entrySystem]['tunnels'].push(newTunnel);
+			systems[entrySystem]['tunnels'][exitSystem] = newTunnel;
+			
+			//add opposite tunnel, as current RSI uses undirected edges, whereas ours are directional
+			var backTunnel = {
+				size:       responseObject.data.tunnels.resultset[tunnel].size,
+				exitSystem: entrySystem,
+				parent: exitSystem,
+				exit_system_danger: systems[entrySystem]['aggregated_danger']
+			}
+			systems[exitSystem]['tunnels'][entrySystem] = backTunnel;
 		}
 		
 		fs.writeFileSync( path.resolve(__dirname, '../data/systems_with_tunnels.json'), JSON.stringify(systems) );
