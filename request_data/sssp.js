@@ -64,7 +64,7 @@ function getFullPath(vertexList){
  * @Input: all vertex data, source, and comparator function to select shortest edge
  * @Output: a complete path from source to each destination and the corresponding distance
  */
-function sssp(sourceVertexName, weightType, minSize){
+function sssp(weightType, minSize, sourceVertexName){
 	var path = require('path');
 	var fs   = require('fs');
 	var heap = require('heap');
@@ -153,5 +153,5 @@ if(typeof process.argv[2] !== 'undefined')weightType = process.argv[2];
 if(typeof process.argv[3] !== 'undefined')minSize    = process.argv[3];
 if(typeof process.argv[4] !== 'undefined')sourceVertexName = process.argv[4];
 
-console.log( sssp(sourceVertexName, weightType, minSize) );
+console.log( sssp(weightType, minSize, sourceVertexName) );
 
