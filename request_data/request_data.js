@@ -14,11 +14,9 @@
 	- we can loop up a complete list of tunnels by system ID, from which we can easily implement the single-source-shortest-path algorithm (Dijkstra's)
 	- the tunnels are saved as single-direction, which means if CIG ever creates one-way tunnels, we don't have to change our code
 	
-	@Output: systems_with_tunnels.json
+	@Output: vertices.json, details.json
 	
-	The JSON contains an array of systems
-	Example System:
-	
+	Example Vertex:
 	"314":{
 		"system": 314,
 		"name": "Stanton",
@@ -30,7 +28,7 @@
 		}
 	}
 	
-	(if uncommenting values)
+	Example Detail:
 	"314":{
 		"system": 314,
 		"name": "Stanton",
