@@ -111,7 +111,7 @@ function sssp(weightType, minSize, sourceVertexName){
 //decide if the visiting vertex helps, depending on what weight we're optimizing
 function tryNewEdge(visitingVertex, targetVertex, weightType){
 	if(weightType === 'jumps') return (1 + visitingVertex['weightDistance'] < targetVertex['weightDistance']);
-	if(weightType === 'danger')return (targetVertex['danger'] + visitingVertex['weightDanger'] < targetVertext['weightDanger']);
+	if(weightType === 'danger')return (targetVertex['danger'] + visitingVertex['weightDanger'] < targetVertex['weightDanger']);
 }
 
 function visitVertex(vertexHeap, visitNodes, vertexList, weightType, minSize){
