@@ -4,7 +4,7 @@
   "description": "Trade Profit Calculator (client) for Star Citizen",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --compilers js:babel-core/register --recursive"
+    "test": "mocha --compilers js:babel-core/register --recursive --use_strict"
   },
   "keywords": [
     "Star Citizen",
@@ -32,6 +32,7 @@
     "gulp-uglify": "^2.0.0",
     "gulp-util": "^3.0.7",
     "mathjs": "^3.4.1",
+    "node-dijkstra": "^2.3.0",
     "normalize-scss": "^5.0.3",
     "object.assign": "^4.0.4",
     "react": "^15.3.1",
