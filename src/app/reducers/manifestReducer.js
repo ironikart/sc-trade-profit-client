@@ -5,10 +5,7 @@ import * as graph from '../util/graph';
 import * as c from '../constants';
 
 // Cache a jump point graph.
-let pointGraph = new graph.Graph();
-c.pointsGraph.forEach((edge) => {
-    pointGraph.addEdge(edge[0], edge[1]);
-});
+let pointGraph = graph.createGraphFromEdgeNodes(c.pointsGraph);
 
 function calculateResults(state) {
     let clone = assign({}, state);
@@ -98,8 +95,11 @@ function setShip(state, action) {
 // Calculate a path to the chosen jump point using an undirected cyclic graph.
 function calculateSystemPath(clone) {
     if (clone.origin !== '' && clone.destination !== '') {
-        clone.path = graph.shortestPath(pointGraph, parseFloat(clone.origin), parseFloat(clone.destination));
-        clone.scope.jumps = clone.path.length;
+        let shortest = graph.shortestPath(pointGraph, clone.origin, clone.destination);
+        if (shortest !== null) {
+            clone.path = shortest.path;
+            clone.scope.jumps = shortest.cost;
+        }
     }
 
     return clone;
