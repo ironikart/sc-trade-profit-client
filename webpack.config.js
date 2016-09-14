@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const fs = require('fs');
 
 let ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -15,7 +16,13 @@ module.exports = {
     },
     plugins: [
         extractCSS,
-        extractHTML
+        extractHTML,
+        new webpack.DefinePlugin({
+            'process.env': Object.keys(process.env).reduce(function(o, k) {
+                o[k] = JSON.stringify(process.env[k]);
+                return o;
+            }, {})
+        })
     ],
     output: {
         path:       path.join(__dirname, 'build'),
@@ -27,7 +34,7 @@ module.exports = {
             {
                 test:    /\.js(x)?$/,
                 loader:  'babel',
-                exclude: /node_modules/,
+                exclude: /node_modules\/(?!node-dijkstra)/,
                 query:   {
                     presets: ['es2015', 'react']
                 }
