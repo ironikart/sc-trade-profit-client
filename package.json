@@ -1,10 +1,11 @@
 {
   "name": "sc_trade_app",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Trade Profit Calculator (client) for Star Citizen",
   "main": "index.js",
   "scripts": {
     "compile": "/usr/local/bin/babel -d libs/ src/app/util/",
+    "build": "NODE_ENV=production webpack --optimize-minimize && cp -R build/* docs/ && rm -f docs/*.map && npm run compile",
     "test": "mocha --compilers js:babel-core/register --recursive --use_strict"
   },
   "keywords": [
@@ -46,6 +47,7 @@
     "prop-loader": "0.0.5",
     "react-addons-test-utils": "^15.3.1",
     "sass-loader": "^4.0.2",
+    "string-replace-webpack-plugin": "^0.0.3",
     "style-loader": "^0.13.1",
     "transform-loader": "^0.2.3",
     "url-loader": "^0.5.7",
