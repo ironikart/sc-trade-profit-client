@@ -46,6 +46,7 @@ var clearData = document.getElementById('clearData');
 clearData.addEventListener('click', function() {
   window.localStorage.removeItem('expressions');
   window.localStorage.removeItem('manifest');
+  ga('send', 'event', 'Store', 'reset-hard-clear');
   alert('cleared');
 }, false);
 </script>

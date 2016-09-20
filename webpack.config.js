@@ -2,9 +2,12 @@ const path = require('path');
 const webpack = require('webpack');
 const fs = require('fs');
 
+let StringReplacePlugin = require('string-replace-webpack-plugin');
 let ExtractTextPlugin = require('extract-text-webpack-plugin');
 let extractCSS = new ExtractTextPlugin('main.css');
 let extractHTML = new ExtractTextPlugin('index.html');
+
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 
 module.exports = {
     devtool: 'source-map',
@@ -14,6 +17,9 @@ module.exports = {
         html:       './html/index.html',
         css:        './styles/main.scss'
     },
+    devServer: {
+        contentBase: './build'
+    },
     plugins: [
         extractCSS,
         extractHTML,
@@ -22,7 +28,8 @@ module.exports = {
                 o[k] = JSON.stringify(process.env[k]);
                 return o;
             }, {})
-        })
+        }),
+        new StringReplacePlugin()
     ],
     output: {
         path:       path.join(__dirname, 'build'),
@@ -59,6 +66,18 @@ module.exports = {
                 loader: extractHTML.extract(
                     'html?attrs=img:src'
                 )
+            },
+            {
+                test:   /\.html$/,
+                loader: StringReplacePlugin.replace({
+                    replacements: [
+                        {
+                            pattern:     /{version}/ig,
+                            replacement: function () {
+                                return pkg.version;
+                            }
+                        }
+                    ]})
             }
         ]
     }
