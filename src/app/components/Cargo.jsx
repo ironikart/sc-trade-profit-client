@@ -57,8 +57,8 @@ class Cargo extends React.Component {
                             <th>Name</th>
                             <th>Buy <em>(at origin)</em></th>
                             <th>Sell <em>(at dest)</em></th>
-                            <th>Quantity</th>
                             <th>Mass (per item)</th>
+                            <th>Quantity</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -89,16 +89,16 @@ class Cargo extends React.Component {
                                 </td>
                                 <td>
                                     <input
-                                        type="number"
-                                        onChange={this.updateCargoItem.bind(this, 'quantity', i)}
-                                        value={cargo.quantity}
+                                        type="text"
+                                        onChange={this.updateCargoItem.bind(this, 'mass', i)}
+                                        value={cargo.mass}
                                     />
                                 </td>
                                 <td>
                                     <input
-                                        type="text"
-                                        onChange={this.updateCargoItem.bind(this, 'mass', i)}
-                                        value={cargo.mass}
+                                        type="number"
+                                        onChange={this.updateCargoItem.bind(this, 'quantity', i)}
+                                        value={cargo.quantity}
                                     />
                                 </td>
                                 <td>
