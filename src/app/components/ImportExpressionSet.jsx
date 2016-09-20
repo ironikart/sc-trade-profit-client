@@ -5,7 +5,8 @@ class ImportExpressionSet extends React.Component {
 
     handleImport() {
         try {
-            importSet(this._import.value);
+            let data = importSet(this._import.value);
+            this.props.importSet(data);
             this._import.value = '';
         } catch (e) {
             this.props.setError(e.toString());

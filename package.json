@@ -4,6 +4,7 @@
   "description": "Trade Profit Calculator (client) for Star Citizen",
   "main": "index.js",
   "scripts": {
+    "compile": "/usr/local/bin/babel -d libs/ src/app/util/",
     "test": "mocha --compilers js:babel-core/register --recursive --use_strict"
   },
   "keywords": [

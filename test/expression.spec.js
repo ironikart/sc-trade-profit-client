@@ -1,6 +1,6 @@
 /*global describe, it*/
 import expect from 'expect';
-import { parse, run } from '../src/app/util/expression';
+import { parse, run } from '../index';
 
 describe('User actions', () => {
     it('can be run with basic math', () => {

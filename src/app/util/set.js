@@ -1,7 +1,4 @@
-import * as expressionActions from '../actions/expressionActions';
-import store from '../store';
-import assign from 'object.assign';
-import { parse } from '../util/expression';
+import { parse } from './expression';
 
 let exportVersion = 'v2';
 
@@ -86,7 +83,7 @@ function importSet(raw) {
 
     let importData = versionImports[versionFnName](lines);
 
-    store.dispatch(expressionActions.importSet(importData));
+    return importData;
 }
 
 function exportSet(set) {
