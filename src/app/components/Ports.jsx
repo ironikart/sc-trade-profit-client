@@ -19,12 +19,14 @@ class Ports extends React.Component {
     render() {
         let systems = [];
         for (var id in c.systems) {
-            systems.push({
-                label: c.systems[id].name,
-                value: id
-            });
+            if (c.systems.hasOwnProperty(id)) {
+                systems.push({
+                    label: c.systems[id].name,
+                    value: id
+                });
+            }
         }
-        systems = systems.sort((a, b) => a.label > b.label ? 1 : 1);
+        systems = systems.sort((a, b) => a.label > b.label ? 1 : -1);
 
         let path = '';
         if (this.props.origin !== '' && this.props.destination !== '') {

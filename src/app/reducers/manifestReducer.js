@@ -97,7 +97,7 @@ function calculateSystemPath(clone) {
     if (clone.origin !== '' && clone.destination !== '') {
         let shortest = graph.shortestPath(pointGraph, clone.origin, clone.destination);
         if (shortest !== null) {
-            clone.path = shortest.path;
+            clone.path = shortest.path || [];
             clone.scope.jumps = shortest.cost;
         }
     }
