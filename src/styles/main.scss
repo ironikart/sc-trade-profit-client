@@ -460,6 +460,24 @@ a {
     }
 }
 
+.formatted-value-field {
+    display: flex;
+
+    &__toggle,
+    &__input {
+        flex: 0 1 auto;
+        min-width: 50%;
+    }
+
+    &__toggle {
+        cursor: pointer;
+        border: $border-light;
+        background: $border-dark;
+        color: $feature-light;
+        @include font-size(.8);
+    }
+}
+
 
 // Bring in react component styles.
 @import "./imports/select.scss";

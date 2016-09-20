@@ -82,6 +82,14 @@ function updateCrew(index, prop, value) {
     };
 }
 
+function updateCrewType(index, cutType) {
+    return {
+        type: 'CREW_TYPE',
+        index,
+        cutType
+    };
+}
+
 module.exports = {
     addCargo,
     updateCargo,
@@ -93,5 +101,6 @@ module.exports = {
     calculate,
     addCrew,
     removeCrew,
-    updateCrew
+    updateCrew,
+    updateCrewType
 };

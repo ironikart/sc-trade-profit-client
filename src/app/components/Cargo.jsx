@@ -117,8 +117,8 @@ class Cargo extends React.Component {
                             <th>Totals:</th>
                             <td><span className="uec">{this.props.scope.totalBuy}</span></td>
                             <td><span className="uec">{this.props.scope.totalSell}</span></td>
-                            <td></td>
                             <td>{this.props.scope.totalMass} tons</td>
+                            <td></td>
                             <td></td>
                         </tr>
                     </tfoot>

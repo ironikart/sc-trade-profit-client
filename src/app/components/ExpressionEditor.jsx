@@ -1,3 +1,5 @@
+/*globals ga*/
+
 import React from 'react';
 import ExpressionResult from './ExpressionResult.jsx';
 import ExpressionItem from './ExpressionItem.jsx';
@@ -41,6 +43,7 @@ class ExpressionEditor extends React.Component {
     }
 
     handleSetChange(option) {
+        ga('send', 'event', 'Set', 'change');
         this.props.setCurrent(option.value);
         this.props.calculate();
     }
@@ -80,15 +83,24 @@ class ExpressionEditor extends React.Component {
     }
 
     handleSave() {
+        ga('send', 'event', 'Store', 'save-click');
         storeJSON('expressions', this.props.expressions);
         storeJSON('manifest', this.props.manifest);
         alert('saved');
     }
 
     handleReset() {
+        ga('send', 'event', 'Store', 'reset-click');
         clear('expressions');
         clear('manifest');
         alert('Saved data reset');
+    }
+
+    handleTabSelect(index) {
+        let tabs = ['Cargo', 'Expressions', 'New', 'Export', 'Import'];
+        if (tabs[index]) {
+            ga('send', 'event', 'TabSelect', tabs[index]);
+        }
     }
 
     render() {
@@ -158,7 +170,7 @@ class ExpressionEditor extends React.Component {
                     </button>
                 </div>
                 {error}
-                <Tabs>
+                <Tabs onSelect={this.handleTabSelect.bind(this)}>
                     <TabList>
                         <Tab>Cargo</Tab>
                         <Tab>Expressions</Tab>
@@ -174,6 +186,7 @@ class ExpressionEditor extends React.Component {
                             addCrew={this.props.addCrew}
                             removeCrew={this.props.removeCrew}
                             updateCrew={this.props.updateCrew}
+                            updateCrewType={this.props.updateCrewType}
                             setOrigin={this.props.setOrigin}
                             setDestination={this.props.setDestination}
                             setCurrentShip={this.props.setCurrentShip}
